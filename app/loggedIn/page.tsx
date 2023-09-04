@@ -63,16 +63,15 @@ function LoggedIn() {
     {label:"Wallet",action:linkWallet},
    ]
 
-   const handleClick=useCallback(async () => {
+   const handleClick=async () => {
     const selected = linkOptions.find((option) => option.label===selectedLink)
     if(selected)selected.action();
-   },[linkOptions,selectedLink]);
 
    const handleMint=useCallback(async () => {
     if (zeroDevReady) {
         const transactionHash = await sendTransaction({
             to: '0xd6bab17e1c076A3b2153C86433e4090ece77741c',
-            value: 1,
+            // value: 1,
             data:encodeFunctionData({
                 abi,
                 functionName:"mint",
@@ -124,4 +123,4 @@ function LoggedIn() {
   )
 }
 
-export default LoggedIn
+export default LoggedIn 
