@@ -66,7 +66,7 @@ function LoggedIn() {
    const handleClick=useCallback(async () => {
     const selected = linkOptions.find((option) => option.label===selectedLink)
     if(selected)selected.action();
-   },[]);
+   },[linkOptions,selectedLink]);
 
    const handleMint=useCallback(async () => {
     if (zeroDevReady) {
