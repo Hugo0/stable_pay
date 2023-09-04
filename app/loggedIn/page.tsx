@@ -83,7 +83,7 @@ function LoggedIn() {
     } else {
         throw new Error('Smart wallet has not yet initialized. Try again once zeroDevReady is true.');
     }
-   },[sendTransaction]);
+   },[sendTransaction,user?.wallet?.address,zeroDevReady]);
 
   return (
     <div className='p-8'>
