@@ -1,6 +1,7 @@
 "use client";
 
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useWallets } from '@privy-io/react-auth';
+import { usePrivySmartAccount } from '@zerodev/privy';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
@@ -17,7 +18,7 @@ function LoggedIn() {
     ready,
     logout,
     authenticated
-    } =usePrivy();
+    } =usePrivySmartAccount();
 
     const {wallets}=useWallets();
     const router=useRouter();
