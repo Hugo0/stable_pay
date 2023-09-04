@@ -4,12 +4,16 @@ import { useWallets } from '@privy-io/react-auth';
 import { usePrivySmartAccount } from '@zerodev/privy';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { encodeFunctionData } from 'viem';
+import abi from "@/lib/nft.json";
 
 function LoggedIn() {
     const [selectedLink,setSelectedLink]=useState("");
     const [walletBalance,setWalletBalance]=useState("");
     const [embeddedWallet,setEmbeddedWallet]=useState<any>("");
+    const [transactionHash,setTransactionHash]=useState("");
+
    const {user,
     linkEmail,
     linkPhone,
@@ -19,6 +23,7 @@ function LoggedIn() {
     logout,
     authenticated,
     zeroDevReady,
+    sendTransaction
     } =usePrivySmartAccount();
 
     const {wallets}=useWallets();
@@ -58,10 +63,27 @@ function LoggedIn() {
     {label:"Wallet",action:linkWallet},
    ]
 
-   const handleClick=async () => {
+   const handleClick=useCallback(async () => {
     const selected = linkOptions.find((option) => option.label===selectedLink)
     if(selected)selected.action();
-   }
+   },[]);
+
+   const handleMint=useCallback(async () => {
+    if (zeroDevReady) {
+        const transactionHash = await sendTransaction({
+            to: '0xd6bab17e1c076A3b2153C86433e4090ece77741c',
+            value: 1,
+            data:encodeFunctionData({
+                abi,
+                functionName:"mint",
+                args:[user?.wallet?.address]
+            })
+        });
+        setTransactionHash(transactionHash);
+    } else {
+        throw new Error('Smart wallet has not yet initialized. Try again once zeroDevReady is true.');
+    }
+   },[sendTransaction]);
 
   return (
     <div className='p-8'>
@@ -96,6 +118,8 @@ function LoggedIn() {
                 Log Out
             </button>
         </div>
+        <button onClick={handleMint} className='bg-green-500 hover:bg-green-600 mt-4 py-2 px-4'>Mint</button>
+        {transactionHash!=="" && <p>Transaction Hash: {transactionHash}</p>}
     </div>
   )
 }
