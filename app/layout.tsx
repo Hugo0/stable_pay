@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import PrivyProviderB from './providers/PrivyProvidersB'
+import ZeroDevProviderComponent from './providers/ZeroDevProviderComponent'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -43,11 +44,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <PrivyProviderB>
-        <body>
-          {children}
-        </body>
-      </PrivyProviderB>
+      <ZeroDevProviderComponent>
+        <PrivyProviderB>
+          <body>
+            {children}
+          </body>
+        </PrivyProviderB>
+      </ZeroDevProviderComponent>
     </html>
   )
 }
