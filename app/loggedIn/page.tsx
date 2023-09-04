@@ -66,6 +66,7 @@ function LoggedIn() {
    const handleClick=async () => {
     const selected = linkOptions.find((option) => option.label===selectedLink)
     if(selected)selected.action();
+   }
 
    const handleMint=useCallback(async () => {
     if (zeroDevReady) {
@@ -122,5 +123,4 @@ function LoggedIn() {
     </div>
   )
 }
-
 export default LoggedIn 
