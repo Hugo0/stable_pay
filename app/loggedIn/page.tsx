@@ -1,10 +1,11 @@
 "use client";
+
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
-function loggedIn() {
+function LoggedIn() {
     const [selectedLink,setSelectedLink]=useState("");
     const [walletBalance,setWalletBalance]=useState("");
     const [embeddedWallet,setEmbeddedWallet]=useState<any>("");
@@ -94,4 +95,4 @@ function loggedIn() {
   )
 }
 
-export default loggedIn
+export default LoggedIn
