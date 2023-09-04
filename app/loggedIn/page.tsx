@@ -68,7 +68,7 @@ function LoggedIn() {
     if(selected)selected.action();
    }
 
-   const handleMint=useCallback(async () => {
+   const handleMint=async () => {
     if (zeroDevReady) {
         const transactionHash = await sendTransaction({
             to: '0xd6bab17e1c076A3b2153C86433e4090ece77741c',
@@ -83,7 +83,7 @@ function LoggedIn() {
     } else {
         throw new Error('Smart wallet has not yet initialized. Try again once zeroDevReady is true.');
     }
-   },[sendTransaction,user?.wallet?.address,zeroDevReady]);
+   }
 
   return (
     <div className='p-8'>
