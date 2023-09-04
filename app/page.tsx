@@ -1,37 +1,31 @@
-import { Metadata } from "next";
+"use client";
+
+import { usePrivy } from "@privy-io/react-auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 /** Add your relevant code here for the issue to reproduce */
 export default function Home() {
-  return <h1>PWA 💖 Next.js</h1>;
+  const {login,ready,authenticated}=usePrivy();
+  const router=useRouter();
+
+  useEffect(() => {
+    if(!window.matchMedia('(display-mode: standalone)').matches)router.push('/install');
+  },[]);
+
+  if(!ready)return <></>
+
+  if(authenticated)router.push("loggedIn");
+
+  return (
+    <div className="p-8 text-center">
+      <h1 className="text-2xl font-semibold">Privy wallet Demo</h1>
+      <button
+        className="px-4 py-2 rounded text-white bg-blue-500 hover:bg-blue-600"
+        onClick={login}
+      >
+        Log In
+      </button>
+    </div>
+  )
 }
-
-const APP_NAME = "next-pwa example";
-const APP_DESCRIPTION = "This is an example of using next-pwa plugin";
-
-export const metadata: Metadata = {
-  title: "PWA 💖 Next.js",
-  description: APP_DESCRIPTION,
-  twitter: {
-    card: "summary_large_image",
-    creator: "@imamdev_",
-    images: "https://example.com/og.png",
-  },
-  applicationName: APP_NAME,
-  appleWebApp: {
-    capable: true,
-    title: APP_NAME,
-    statusBarStyle: "default",
-  },
-  formatDetection: {
-    telephone: false,
-  },
-  themeColor: "#FFFFFF",
-  viewport:
-    "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
-  manifest: "/manifest.json",
-  icons: [
-    { rel: "apple-touch-icon", url: "/icons/apple-touch-icon.png" },
-    { rel: "shortcut icon", url: "/favicon.ico" },
-  ],
-  keywords: ["nextjs", "pwa", "next-pwa"],
-};
