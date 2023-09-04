@@ -18,7 +18,7 @@ function LoggedIn() {
     ready,
     logout,
     authenticated,
-    zeroDevReady
+    zeroDevReady,
     } =usePrivySmartAccount();
 
     const {wallets}=useWallets();
@@ -30,6 +30,7 @@ function LoggedIn() {
         async function setUp() {
             const embeddedWallet=wallets.find((wallet) => wallet.walletClientType === "privy");
             if(embeddedWallet){
+                console.log(embeddedWallet);
                 const provider = await embeddedWallet.getEthereumProvider();
                     await provider.request({method: "wallet_switchEthereumChain",
                     params:[{chainId: `0x${Number(11155111).toString(16)}`}]
@@ -83,8 +84,10 @@ function LoggedIn() {
                 Link Selected Account
             </button>
         </div>
-        <p>The Address of the embedded Wallet is {embeddedWallet?.address}</p>
+        <p>The Address of the Smart Wallet is {user?.wallet?.address}</p>
+        <p>The EOA Address : {embeddedWallet?.address}</p>
         {walletBalance && <p>With a balance of {walletBalance}ETH</p>}
+        {zeroDevReady && <p>Smart Wallet Created!!!</p>}
         <div>
             <button
                 onClick={logout}
