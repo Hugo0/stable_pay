@@ -17,7 +17,8 @@ function LoggedIn() {
     linkWallet,
     ready,
     logout,
-    authenticated
+    authenticated,
+    zeroDevReady
     } =usePrivySmartAccount();
 
     const {wallets}=useWallets();
@@ -43,7 +44,7 @@ function LoggedIn() {
             }
         }
         setUp();
-    },[wallets,ready]);
+    },[wallets,ready,zeroDevReady]);
 
     if(ready && !authenticated)router.push("/");
 
