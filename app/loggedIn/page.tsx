@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react'
 import { encodeFunctionData } from 'viem';
 import abi from "@/lib/nft.json";
+import SignMessage from '@/components/SignMessage';
+import SendTransaction from '@/components/SendTransaction';
 
 function LoggedIn() {
     const [selectedLink,setSelectedLink]=useState("");
@@ -23,7 +25,8 @@ function LoggedIn() {
     logout,
     authenticated,
     zeroDevReady,
-    sendTransaction
+    sendTransaction,
+    signMessage
     } =usePrivySmartAccount();
 
     const {wallets}=useWallets();
@@ -120,6 +123,8 @@ function LoggedIn() {
         </div>
         <button onClick={handleMint} className='bg-green-500 hover:bg-green-600 mt-4 py-2 px-4'>Mint</button>
         {transactionHash!=="" && <p>Transaction Hash: {transactionHash}</p>}
+        <SignMessage user={user} signMessage={signMessage} />
+        <SendTransaction user={user} sendTransaction={sendTransaction} />
     </div>
   )
 }

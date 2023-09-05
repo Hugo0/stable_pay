@@ -20,6 +20,7 @@ function PrivyProviderB({children}:{children: React.ReactNode}){
             ],
             embeddedWallets:{
                 createOnLogin:"users-without-wallets",
+                // noPromptOnSignature:true,
             },
             appearance:{
                 accentColor:"#676FFF",
