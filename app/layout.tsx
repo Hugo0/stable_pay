@@ -1,16 +1,13 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import PrivyProviderB from './providers/PrivyProvidersB'
 import ZeroDevProviderComponent from './providers/ZeroDevProviderComponent'
 
-const inter = Inter({ subsets: ['latin'] })
-
-const APP_NAME = "next-pwa example";
-const APP_DESCRIPTION = "This is an example of using next-pwa plugin";
+const APP_NAME = "Stable Pay Global";
+const APP_DESCRIPTION = "Enabling cross border payments";
 
 export const metadata: Metadata = {
-  title: "PWA 💖 Next.js",
+  title: "Stable Pay Global",
   description: APP_DESCRIPTION,
   twitter: {
     card: "summary_large_image",
