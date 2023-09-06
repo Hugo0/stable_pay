@@ -1,10 +1,14 @@
 "use client";
 
-import { User } from '@privy-io/react-auth'
+import { User } from '@privy-io/react-auth';
 import React, { useState } from 'react'
 
+// interface CustomUser extends User{
+//     id?:string|undefined,
+// }
+
 type Props = {
-    user: User,
+    user: any 
     signMessage: any
 }
 

@@ -4,11 +4,12 @@ import { useWallets } from '@privy-io/react-auth';
 import { usePrivySmartAccount } from '@zerodev/privy';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { encodeFunctionData } from 'viem';
 import abi from "@/lib/nft.json";
 import SignMessage from '@/components/SignMessage';
 import SendTransaction from '@/components/SendTransaction';
+import DropDownButton from '@/components/utils/DropDownButton';
 
 function LoggedIn() {
     const [selectedLink,setSelectedLink]=useState("");
@@ -41,7 +42,7 @@ function LoggedIn() {
                 console.log(embeddedWallet);
                 const provider = await embeddedWallet.getEthereumProvider();
                     await provider.request({method: "wallet_switchEthereumChain",
-                    params:[{chainId: `0x${Number(11155111).toString(16)}`}]
+                    params:[{chainId: `0x${Number(1).toString(16)}`}]
                 })
                 const ethProvider=new ethers.providers.Web3Provider(provider);
                 const walletBalance=await ethProvider.getBalance(
@@ -125,6 +126,7 @@ function LoggedIn() {
         {transactionHash!=="" && <p>Transaction Hash: {transactionHash}</p>}
         <SignMessage user={user} signMessage={signMessage} />
         <SendTransaction user={user} sendTransaction={sendTransaction} />
+        <DropDownButton />
     </div>
   )
 }

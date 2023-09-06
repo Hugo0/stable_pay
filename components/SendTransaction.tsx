@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import React from 'react'
 
 type Props = {
-    user:User,
+    user:any,
     sendTransaction:any
 }
 
@@ -16,7 +16,7 @@ const SendTransaction = ({user,sendTransaction}: Props) => {
         const hexValue= ethers.utils.hexlify(weiValue);
         const unsignedTx={
             to: user?.wallet?.address,
-            chainId:11155111,
+            chainId:1,
             value:hexValue,
         }
         const txUiConfig={
@@ -36,7 +36,7 @@ const SendTransaction = ({user,sendTransaction}: Props) => {
             className='mt-4 py-2 px-4 bg-green-500 hover:bg-green-600 rounded text-white'
             onClick={handleSubmit}
         >
-            Send 0.01 eth to yourself!!
+            Send 0.00 eth to yourself!!!
         </button>
     </div>
   )

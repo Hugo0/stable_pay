@@ -1,5 +1,6 @@
 "use client";
 
+import Modal from "@/components/utils/Modal";
 import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -11,6 +12,7 @@ export default function Home() {
 
   useEffect(() => {
     if(!window.matchMedia('(display-mode: standalone)').matches)router.push('/install');
+    else login();
   },[]);
 
   if(!ready)return <></>
@@ -18,10 +20,10 @@ export default function Home() {
   if(authenticated)router.push("loggedIn");
 
   return (
-    <div className="p-8 text-center">
-      <h1 className="text-2xl font-semibold">Privy wallet Demo</h1>
+    <div className="text-center h-screen w-screen flex items-center justify-center flex-col">
+      <Modal title="Please Login" content="You need to login to access the app" />
       <button
-        className="px-4 py-2 rounded text-white bg-blue-500 hover:bg-blue-600"
+        className="fixed bottom-12 px-4 py-2 rounded text-white bg-blue-500 hover:bg-blue-600"
         onClick={login}
       >
         Log In
