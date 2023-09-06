@@ -36,6 +36,7 @@ function LoggedIn() {
 
     useEffect(() => {
         if(!ready)return ;
+        if(!window.matchMedia('(display-mode: standalone)').matches)router.push('/install');
         async function setUp() {
             const embeddedWallet=wallets.find((wallet) => wallet.walletClientType === "privy");
             if(embeddedWallet){

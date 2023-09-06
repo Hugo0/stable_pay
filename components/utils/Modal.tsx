@@ -8,8 +8,8 @@ function Modal({title,content}:Props) {
       <div className='flex h-screen w-screen items-center justify-center bg-gradient-to-r from-purple-500 to-pink-500'>
           <div className="h-screen w-screen max-w-2xl max-h-full px-4 flex items-center justify-center">
               <div className="bg-white rounded-lg relative md:w-full">
-                  <div className="flex items-center justify-center p-4 border-b rounded-t dark:border-gray-600">
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  <div className="flex items-center justify-center p-4 border-b rounded-t">
+                      <h3 className="text-xl font-semibold text-gray-900">
                           {title}
                       </h3>
                   </div>
