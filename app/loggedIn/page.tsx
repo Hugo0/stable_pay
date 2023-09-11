@@ -80,7 +80,7 @@ function LoggedIn() {
             setLoading(false);
         }
         setUp();
-    },[wallets,ready,zeroDevReady,baseCurrency]);
+    },[wallets,ready,zeroDevReady,baseCurrency,router,setLoading,setEoaWalletAddress,setSmartContractAddress]);
 
     if(ready && !authenticated)router.push("/");
 

@@ -23,7 +23,7 @@ const Page = (props: Props) => {
 
        useEffect(() => {
         if(smartContractAddress==="")router.push("/");
-       },[smartContractAddress]);
+       },[smartContractAddress,router]);
 
   return (
     <div className='h-screen w-screen flex justify-center items-center bg-gradient-to-r from-purple-500 to-pink-500'>

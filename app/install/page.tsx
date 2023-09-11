@@ -8,7 +8,7 @@ function Install() {
   const router=useRouter();
   useEffect(() => {
     if(window.matchMedia('(display-mode: standalone)').matches)router.push('/');
-  },[]);
+  },[router]);
     const title="Add To Home Screen";
     const content=["To install the app, you need to add this website to your home screen.","In your browser, tap the share icon and choose “Add to Home” Screen in the option.","Then open the app on your home screen."]
   return (
