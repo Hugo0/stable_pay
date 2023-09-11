@@ -1,0 +1,1 @@
+const countries=[{country_name:"Kuwaiti Dinar (د.ك)",currency_code:"KWD"},{country_name:"Kuwaiti Dinar (د.ك)",currency_code:"KWD"},]

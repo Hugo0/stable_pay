@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     { rel: "apple-touch-icon", url: "/icons/apple-touch-icon.png" },
     { rel: "shortcut icon", url: "/favicon.ico" },
   ],
-  keywords: ["nextjs", "pwa", "next-pwa"],
+  keywords: ["Stable Pay Global", "Global Payments"],
 };
 
 export default function RootLayout({

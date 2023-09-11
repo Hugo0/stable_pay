@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.18",
     "@imbios/next-pwa": "^1.1.1",
     "@privy-io/react-auth": "^1.35.1",
     "@types/node": "20.5.7",
@@ -31,6 +32,7 @@
     "typescript": "5.2.2",
     "viem": "^1.10.1",
     "web3": "^4.1.1",
-    "workbox-webpack-plugin": "^6.6.0"
+    "workbox-webpack-plugin": "^6.6.0",
+    "zustand": "^4.4.1"
   }
 }

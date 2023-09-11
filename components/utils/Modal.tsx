@@ -1,6 +1,6 @@
 type Props={
     title?:String,
-    content?:String,
+    content?:String[],
 }
 
 function Modal({title,content}:Props) {
@@ -13,17 +13,21 @@ function Modal({title,content}:Props) {
                           {title}
                       </h3>
                   </div>
-                  <div className="p-6 space-y-6">
-                      <p className="text-base leading-relaxed text-gray-500">
-                        {content}
-                      </p>
-                  </div>
-                  <div className="absolute -top-0.5 -right-0.5">
+                  {content?.map(text => (
+                    <div className="p-6 space-y-6 flex justify-center">
+                        <div className="flex justify-center">
+                            <div className=" text-gray-500 flex justify-center text-base leading-relaxed">
+                                {text}
+                            </div>
+                        </div>
+                    </div>
+                  ))}
+                  {/* <div className="absolute -top-0.5 -right-0.5">
                       <span className="relative flex h-6 w-6">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
                           <span className="relative inline-flex rounded-full h-6 w-6 bg-sky-500"></span>
                       </span>
-                  </div>
+                  </div> */}
               </div>
           </div>
       </div>
