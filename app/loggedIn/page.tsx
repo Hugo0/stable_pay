@@ -49,7 +49,6 @@ function LoggedIn() {
     zeroDevReady,
     sendTransaction,
     signMessage,
-    
     } =usePrivySmartAccount();
 
     const {wallets}=useWallets();
@@ -57,8 +56,8 @@ function LoggedIn() {
 
     useEffect(() => {
         if(!ready)return ;
-        if(baseCurrency==="")router.push("/baseCurrency");
         if(!window.matchMedia('(display-mode: standalone)').matches)router.push('/install');
+        if(baseCurrency==="")router.push("/baseCurrency");
         setLoading(true);
         async function setUp() {
             const embeddedWallet=wallets.find((wallet) => wallet.walletClientType === "privy");
