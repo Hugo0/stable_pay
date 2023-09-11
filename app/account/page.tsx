@@ -64,7 +64,7 @@ const Page = (props: Props) => {
                         </div>
                     </div>
                     <div>
-                        <p className='text-sm text-gray-400'>A user's embedded wallet is theirs to keep, and even take with them.</p>
+                        <p className='text-sm text-gray-400'>A user&apos;s embedded wallet is theirs to keep, and even take with them.</p>
                         <div className='text-blue-500 my-2 flex items-center hover:cursor-pointer justify-center' onClick={exportWallet}>
                             <ArrowUpOnSquareIcon className='h-8 w-8' />
                             <p>Export your Wallet</p>
