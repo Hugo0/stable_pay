@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
 type Props = {}
 
-const page = (props: Props) => {
+const Page = (props: Props) => {
     const router=useRouter();
     const [smartContractAddress,eoaWalletAddress]=userStore(state => [state.smartContractAddress,state.eoaWalletAddress]);
     const {linkEmail,linkDiscord,linkGoogle,linkTwitter,linkPhone,exportWallet,user}=usePrivySmartAccount();
@@ -44,9 +44,9 @@ const page = (props: Props) => {
                     <UserCircleIcon className='h-8 w-8' />
                     <p className=''>Linked Socials</p>
                 </div>
-                {linkOptions.map(element =>  {
+                {linkOptions.map((element,index) =>  {
                     return (
-                    <div className='border flex justify-between items-center w-full md:w-1/2 self-center rounded-md p-2 m-1'>
+                    <div key={index} className='border flex justify-between items-center w-full md:w-1/2 self-center rounded-md p-2 m-1'>
                         <p className='text-gray-600'>{element.label}</p>
                         <PlusCircleIcon 
                         className="h-8 w-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white hover:cursor-pointer " 
@@ -81,4 +81,4 @@ const page = (props: Props) => {
   )
 }
 
-export default page
+export default Page

@@ -4,7 +4,7 @@ import Modal from "@/components/utils/Modal"
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-function install() {
+function Install() {
   const router=useRouter();
   useEffect(() => {
     if(window.matchMedia('(display-mode: standalone)').matches)router.push('/');
@@ -57,4 +57,4 @@ function install() {
   )
 }
 
-export default install
+export default Install

@@ -49,8 +49,8 @@ const DropDownButton = () => {
                     <input className='outline-none' type="text" onChange={handleChange} placeholder="Search your country" value={searchQuery} />
                 </div>
                 <ul className="p-3 space-y-1 text-sm text-gray-700" aria-labelledby="dropdownRadioBgHoverButton">
-                    {currencies.map(({currency_name,currency_code}:{currency_name:string,currency_code:string}) => (
-                        <li className='hover:cursor-pointer'>
+                    {currencies.map(({currency_name,currency_code}:{currency_name:string,currency_code:string},index) => (
+                        <li key={index} className='hover:cursor-pointer'>
                             <div className={`flex items-center p-2 rounded hover:cursor-pointer ${selectedCurrency===currency_code?'bg-purple-400':'hover:bg-gray-100'}`} onClick={() => handleCurrencySelection(currency_code)}>
                                 <input id="default-radio-4" type="radio" value="" name="default-radio" className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 ${selectedCurrency===currency_code?'ring-blue-500 ring-2':''}`} />
                                 <label className="w-full ml-2 text-sm font-medium text-gray-900 rounded">{currency_name} - {currency_code}</label>

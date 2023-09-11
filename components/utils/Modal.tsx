@@ -13,8 +13,8 @@ function Modal({title,content}:Props) {
                           {title}
                       </h3>
                   </div>
-                  {content?.map(text => (
-                    <div className="p-6 space-y-6 flex justify-center">
+                  {content?.map((text,index) => (
+                    <div className="p-6 space-y-6 flex justify-center" key={index}>
                         <div className="flex justify-center">
                             <div className=" text-gray-500 flex justify-center text-base leading-relaxed">
                                 {text}
