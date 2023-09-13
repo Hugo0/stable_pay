@@ -17,7 +17,7 @@ export default function Home() {
   useEffect(() => {
     if(!window.matchMedia('(display-mode: standalone)').matches)router.push('/install');
     else login();
-  },[login,router]);
+  },[]);
 
   if(!ready)return <></>
 

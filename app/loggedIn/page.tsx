@@ -86,18 +86,6 @@ function LoggedIn() {
 
    if(!user)return <></>
 
-   const linkOptions=[
-    {label:"Email",action:linkEmail},
-    {label:"Phone",action:linkPhone},
-    {label:"Google",action:linkGoogle},
-    {label:"Wallet",action:linkWallet},
-   ]
-
-   const handleClick=async () => {
-    const selected = linkOptions.find((option) => option.label===selectedLink)
-    if(selected)selected.action();
-   }
-
    const handleMint=async () => {
     if (zeroDevReady) {
         const transactionHash = await sendTransaction({
@@ -183,8 +171,8 @@ function LoggedIn() {
         </div>
         {/* <button onClick={handleMint} className='bg-green-500 hover:bg-green-600 mt-4 py-2 px-4'>Mint</button>
         {transactionHash!=="" && <p>Transaction Hash: {transactionHash}</p>}
-        <SignMessage user={user} signMessage={signMessage} />
-    <SendTransaction user={user} sendTransaction={sendTransaction} /> */}
+    <SignMessage user={user} signMessage={signMessage} /> */}
+    <SendTransaction user={user} sendTransaction={sendTransaction} />
     <div>
         <button
             onClick={logout}
