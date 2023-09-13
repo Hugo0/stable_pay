@@ -4,7 +4,7 @@ import { userStore } from "@/store/UserStore";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { usePrivySmartAccount } from "@zerodev/privy";
 
-const handleLogin=() => {
+const HandleLogin=() => {
     // router.push('/baseCurrency');
     // console.log(`User created: ${user.id}`)
     const [setSmartContractAddress]=userStore(state => [state.setSmartContractAddress]);
@@ -16,7 +16,7 @@ function PrivyProviderB({children}:{children: React.ReactNode}){
     return (
     <PrivyProvider
         appId={process.env.NEXT_PUBLIC_APP_ID || ""}
-        onSuccess={handleLogin}
+        onSuccess={HandleLogin}
         config={{
             loginMethods:[
                 "wallet",
