@@ -15,9 +15,10 @@ import SideBar from '@/components/SideBar';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import { generalStore } from '@/store/GeneralStore';
 import Hamburger from '@/components/utils/Hamburger';
+import SendTransactionModal from '@/components/SendTransactionModal';
 
 function LoggedIn() {
-    const [sideBarOpen,setSideBarOpen]=useState(false);
+    const [transactionModalOpen,setTransactionOpen]=useState(false);
     const [selectedLink,setSelectedLink]=useState("");
     const [walletBalance,setWalletBalance]=useState("");
     const [embeddedWallet,setEmbeddedWallet]=useState<any>("");
@@ -74,8 +75,11 @@ function LoggedIn() {
                 const ethStringAmount=ethers.utils.formatEther(walletBalance);
                 setWalletBalance(ethStringAmount);
                 setEmbeddedWallet(embeddedWallet);
-                setEoaWalletAddress(embeddedWallet?.address);
-                setSmartContractAddress(user?.wallet?.address || "");
+                
+                if(smartContractAddress==="" || eoaWalletAddress===""){
+                    setEoaWalletAddress(embeddedWallet?.address || "");
+                    setSmartContractAddress(user?.wallet?.address || "");
+                }
             }
             setLoading(false);
         }
@@ -103,14 +107,15 @@ function LoggedIn() {
     }
    }
 
-   const handleSideBarOpen= async () => {
-    if(!user || !zeroDevReady || !ready || smartContractAddress==="") return;
-    setSideBarOpen(true);
+   const handleSendTransactionOpen= async () => {
+    // if(!user || !zeroDevReady || !ready || smartContractAddress==="") return;
+    setTransactionOpen(true);
    }
 
   return (
     <div className='flex flex-col justify-center h-screen w-screen bg-gradient-to-r from-purple-500 to-pink-500'>
         <Hamburger />
+        {transactionModalOpen && <SendTransactionModal />}
     <div className='p-8 flex flex-col items-center bg-white w-full md:w-1/2 self-center rounded-md shadow-lg'>
         <p className='text-xl font-semibold underline'>My Balance</p>
         {/* <p className='mb-4'>User {user?.id} has linked following accounts:</p> */}
@@ -167,7 +172,7 @@ function LoggedIn() {
         {/* {zeroDevReady && <p>Smart Wallet Created!!!</p>} */}
         <div className='mt-2 flex'>
             <button className='bg-green-500 hover:bg-green-600 m-4 py-2 px-4 rounded-lg text-white'>Add funds</button>
-            <button className='bg-green-500 hover:bg-green-600 m-4 py-2 px-4 rounded-lg text-white'>Send</button>
+            <button className='bg-green-500 hover:bg-green-600 m-4 py-2 px-4 rounded-lg text-white' onClick={handleSendTransactionOpen}>Send</button>
         </div>
         {/* <button onClick={handleMint} className='bg-green-500 hover:bg-green-600 mt-4 py-2 px-4'>Mint</button>
         {transactionHash!=="" && <p>Transaction Hash: {transactionHash}</p>}

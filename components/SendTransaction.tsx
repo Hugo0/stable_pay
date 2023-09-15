@@ -3,7 +3,8 @@
 import { userStore } from '@/store/UserStore';
 import { User } from '@privy-io/react-auth'
 import { ethers } from 'ethers';
-import React, { useState } from 'react'
+import { useState } from 'react';
+import { QrReader } from 'react-qr-reader';
 
 type Props = {
     user:any,
@@ -11,9 +12,27 @@ type Props = {
 }
 
 const Popup=() => {
+    const [receiverAddress,setReceiverAddress]=useState("");
     return (
-        <div>
-            
+        <div className='h-screen w-screen'>
+            <QrReader
+                onResult={(result, error) => {
+                    if (!!result) {
+                      setReceiverAddress(result?.getText());
+                    }
+          
+                    if (!!error) {
+                      console.info(error);
+                    }
+                  }}
+                  constraints={
+                    {
+                        // facingMode:'user'
+                    }
+                  }
+                //   style={{ width: '100%' }}
+            />
+            {receiverAddress!=="" && <p>{receiverAddress}</p>}
         </div>
 
     )
@@ -21,9 +40,11 @@ const Popup=() => {
 
 const SendTransaction = ({user,sendTransaction}: Props) => {
     const [txHash,setTxHash]=useState("");
+    const [popupOpen,setPopupOpen]=useState<boolean>(false);
     const [smartContractAddress]=userStore(state => [state.smartContractAddress]);
     const handleSubmit = async () => {
-        const ethAmount="0.000";
+        // setPopupOpen(true);
+        const ethAmount="0.001";
         const weiValue =ethers.utils.parseEther(ethAmount);
         const hexValue= ethers.utils.hexlify(weiValue);
         const unsignedTx={
@@ -44,6 +65,7 @@ const SendTransaction = ({user,sendTransaction}: Props) => {
 
   return (
     <div>
+        {popupOpen && <Popup />}
         <button
             disabled={!user?.wallet}
             className='mt-4 py-2 px-4 bg-green-500 hover:bg-green-600 rounded text-white'

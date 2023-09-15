@@ -42,15 +42,15 @@ const SideBar = ({setSideBarOpen,sideBarOpen}: Props) => {
             <div className='flex flex-col items-center'>
                 <button className='border border-blue-500 rounded-md p-2 m-2 w-1/2' onClick={() => {
                     setSideBarOpen(false);
-                    router.push("/loggedIn");
-                }}>Terms of Service</button>
+                    router.push("/qr");
+                }}>QR Code</button>
                 <button className='border border-blue-500 rounded-md p-2 m-2 w-1/2' onClick={() => {
                     setSideBarOpen(false);
-                    router.push("/loggedIn");
+                    router.push("/qr");
                 }}>Privacy Policy</button>
                 <button className='border border-blue-500 rounded-md p-2 m-2 w-1/2' onClick={() => {
                     setSideBarOpen(false);
-                    router.push("/loggedIn");
+                    router.push("/qr");
                 }}>Cookie Policy</button>
             </div>
         </div>

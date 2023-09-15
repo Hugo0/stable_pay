@@ -1,15 +1,15 @@
 "use client";
 
-import { userStore } from "@/store/UserStore";
+// import { userStore } from "@/store/UserStore";
 import { PrivyProvider } from "@privy-io/react-auth";
-import { usePrivySmartAccount } from "@zerodev/privy";
+// import { usePrivySmartAccount } from "@zerodev/privy";
 
 const HandleLogin=() => {
     // router.push('/baseCurrency');
     // console.log(`User created: ${user.id}`)
-    const [setSmartContractAddress]=userStore(state => [state.setSmartContractAddress]);
-    const {user}=usePrivySmartAccount();
-    setSmartContractAddress(user?.wallet?.address || "");
+    // const [setSmartContractAddress]=userStore(state => [state.setSmartContractAddress]);
+    // const {user}=usePrivySmartAccount();
+    // setSmartContractAddress(user?.wallet?.address || "");
 }
 
 function PrivyProviderB({children}:{children: React.ReactNode}){
@@ -29,6 +29,7 @@ function PrivyProviderB({children}:{children: React.ReactNode}){
             embeddedWallets:{
                 createOnLogin:"users-without-wallets",
                 noPromptOnSignature:true,
+                requireUserPasswordOnCreate: true
             },
             appearance:{
                 accentColor:"#676FFF",
