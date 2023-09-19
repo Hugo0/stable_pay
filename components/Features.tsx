@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { parseCookies } from 'nookies'
+import Link from 'next/link'
 
 const links = ['Payments','Scan', 'History']
 
@@ -14,7 +15,7 @@ const Features = () => {
 
   console.log(eoaAddress);
 
-  const handleFilter = (link: string) => {
+  const handleFilter = async (link: string) => {
     let newUrl = '';
     
     if(active === link) {
@@ -24,21 +25,23 @@ const Features = () => {
       setActive(link);
     }
     
-    router.push(newUrl, { scroll: false });
+    // await router.push(`?feature=${active}`, { scroll: false });
   }
 
   return (
     <ul className="text-white-800 md:flex-center body-text no-scrollbar flex w-full max-w-full gap-2 overflow-auto py-8 sm:max-w-2xl">
     {links.map((link) => (
-        <button
+        <Link
         key={link}
+        href={`?feature=${link.toLocaleLowerCase()}`}
         onClick={() => handleFilter(link)}
         className={`${
             active === link ?"gradient_blue-purple" : "bg-black-300"
             } whitespace-nowrap rounded-lg px-8 py-2.5 capitalize`}
+            scroll={false}
             >
         {link}
-        </button>
+        </Link>
     ))}
     </ul>
   )

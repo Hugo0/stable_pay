@@ -59,7 +59,7 @@ const Page = (props: Props) => {
                 </div>
                 {linkOptions.map((element,index) =>  {
                     return (
-                    <div key={index} className='border flex justify-between items-center w-full md:w-1/2 self-center rounded-md p-2 my-1 mx-2'>
+                    <div key={index} className='border flex justify-between items-center w-full md:w-3/4 self-center rounded-md p-2 my-1 mx-2'>
                         <p className='text-gray-300'>{element.label}</p>
                         <PlusCircleIcon 
                         className={`${linkedOrNot(element.code)?'hidden':''} h-8 w-8 gradient_pink-orange rounded-full text-white hover:cursor-pointer`} 

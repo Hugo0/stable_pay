@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   description: APP_DESCRIPTION,
   twitter: {
     card: "summary_large_image",
-    creator: "@imamdev_",
-    images: "https://example.com/og.png",
+    creator: "@iammukul",
+    images: "/payments.png",
   },
   applicationName: APP_NAME,
   appleWebApp: {
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     { rel: "apple-touch-icon", url: "/icons/apple-touch-icon.png" },
     { rel: "shortcut icon", url: "/favicon.ico" },
   ],
-  keywords: ["Stable Pay Global", "Global Payments"],
+  keywords: ["KeyChain Global Payments", "Global Payments"],
 };
 
 export default function RootLayout({

@@ -4,15 +4,20 @@ import { useEffect, useState } from 'react'
 import Features from './Features';
 import toast from "react-hot-toast";
 import Install from './Install';
+import Body from './Body';
 
-type Props = {}
+type Props = {
+    feature:string | string[] | undefined,
+}
 
-const Login = (props: Props) => {
+const Login = ({feature}: Props) => {
     const {authenticated,login} = usePrivySmartAccount();
+    const [conditionalRender,setConditionalRender]=useState(true);
     useEffect(() => {
         const userData=setTimeout(async () => {
             if(!window.matchMedia('(display-mode: standalone)').matches){
-                return <Install />
+                setConditionalRender(false);
+                return ;
             }
             const refreshToast=toast.loading('Setting Up, please wait...');
             if(!authenticated){
@@ -25,12 +30,15 @@ const Login = (props: Props) => {
         return () => clearTimeout(userData);
     },[authenticated]);
   return (
-    <div className='flex-center paddings mx-auto w-full max-w-screen-2xl flex-col'>
+    <>
+        {conditionalRender ? (<div className='flex-center paddings mx-auto w-full max-w-screen-2xl flex-col'>
         {authenticated && <Features />}
         <section className=''>
-
+            <Body feature={feature} />
         </section>
-    </div>
+    </div>) : <Install />}
+    </>
+
   )
 }
 

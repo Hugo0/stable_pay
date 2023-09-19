@@ -1,9 +1,10 @@
 import Login from '@/components/Login'
-import React from 'react'
 
 type Props = {}
 
-const Home = async (props: Props) => {
+const Home = async ({searchParams}:{searchParams: {[key:string]:string | string[] | undefined}}) => {
+  console.log('searchParams:',searchParams);
+  const feature=searchParams.feature || "";
   return (
     <main className="flex-center paddings mx-auto w-full max-w-screen-2xl flex-col">
         <section className="nav-padding w-full">
@@ -11,7 +12,7 @@ const Home = async (props: Props) => {
             <h1 className="sm:heading1 heading2 mb-6 text-center text-white">KeyChain Global Payments</h1>
             </div>
         </section>
-        <Login />
+        <Login feature={feature} />
     </main>
   )
 }

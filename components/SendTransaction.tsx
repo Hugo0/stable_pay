@@ -5,7 +5,8 @@ import { User } from '@privy-io/react-auth'
 import { ethers } from 'ethers';
 import { useState } from 'react';
 import { QrReader } from 'react-qr-reader';
-import {toast} from "react-toastify";
+// import {toast} from "react-toastify";
+import toast from "react-hot-toast";
 
 type Props = {
     user:any,
@@ -61,26 +62,26 @@ const SendTransaction = ({user,sendTransaction}: Props) => {
 
         if (user.wallet) {
             // Show the loading toast
-            const loadingToastId = toast.loading('Sending transaction....', {
-                toastId: 'sendTransaction',
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: false, // Set autoClose to false to keep the toast open until manually dismissed
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+            // const loadingToastId = toast.loading('Sending transaction....', {
+            //     toastId: 'sendTransaction',
+            //     position: toast.POSITION.TOP_RIGHT,
+            //     autoClose: false, // Set autoClose to false to keep the toast open until manually dismissed
+            //     hideProgressBar: false,
+            //     closeOnClick: true,
+            //     pauseOnHover: true,
+            //     draggable: true,
+            // });
 
             try {
                 const tempHash = await sendTransaction(unsignedTx);
                 setTxHash(tempHash);
                 // Dismiss the loading toast when the transaction is successful
-                toast.dismiss(loadingToastId);
+                // toast.dismiss(loadingToastId);
 
                 // Show the success toast
-                toast.success('Transaction Successful✅', {
-                toastId: 'sendTransaction',
-                });
+                // toast.success('Transaction Successful✅', {
+                // // toastId: 'sendTransaction',
+                // });
             } catch (error) {
                 // Handle errors if the transaction fails
                 console.error(error);
