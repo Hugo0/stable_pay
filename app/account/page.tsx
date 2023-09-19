@@ -1,56 +1,70 @@
 "use client";
-import Hamburger from '@/components/utils/Hamburger';
-import { userStore } from '@/store/UserStore';
 import { ArrowUpOnSquareIcon, CreditCardIcon, PlusCircleIcon, UserCircleIcon, WalletIcon } from '@heroicons/react/24/outline';
+import { useWallets } from '@privy-io/react-auth';
 import { usePrivySmartAccount } from '@zerodev/privy';
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {}
+export const revalidate=300;
 
 const Page = (props: Props) => {
-    const router=useRouter();
-    const [smartContractAddress,eoaWalletAddress]=userStore(state => [state.smartContractAddress,state.eoaWalletAddress]);
-    const {linkEmail,linkDiscord,linkGoogle,linkTwitter,linkPhone,exportWallet,user}=usePrivySmartAccount();
+    const {linkEmail,linkDiscord,linkGoogle,linkTwitter,linkPhone,exportWallet,user,zeroDevReady,login}=usePrivySmartAccount();
+    const [smartContractAddress,setSmartContractAddress]=useState("");
+    const [eoaAddress,setEoaWalletAddress]=useState("");
 
     const linkOptions=[
         {label:"Email",action:linkEmail,code:"email"},
         {label:"Phone",action:linkPhone,code:"phone"},
-        {label:"Google",action:linkGoogle,code:"gmail"},
+        {label:"Google",action:linkGoogle,code:"google_oauth"},
         {label:"Discord",action:linkDiscord,code:"discord"},
         {label:"Twitter",action:linkTwitter,code:"twitter"},
        ]
 
-       useEffect(() => {
-        if(smartContractAddress==="")router.push("/");
-       },[smartContractAddress,router]);
+    const {wallets}=useWallets();
+
+    const linkedOrNot= (code:string) => {
+        const index=user.linkedAccounts?.findIndex(element => element.type===code);
+        return index!=-1;
+    }
+       
+    useEffect(() => {
+           if(!zeroDevReady){
+               login();
+            }else{
+            const response=user.linkedAccounts;
+            console.log('response:',response);
+            setSmartContractAddress(user?.wallet?.address || "");
+            const EmbeddedWallet=wallets.find((wallet) => wallet.walletClientType === "privy");
+            setEoaWalletAddress(EmbeddedWallet?.address || "");
+        }
+    },[zeroDevReady]);
 
   return (
     <div className='h-screen w-screen flex justify-center items-center bg-gradient-to-r from-purple-500 to-pink-500'>
-        <Hamburger />
-        <div className='flex h-5/6 w-full flex-col items-center self-center md:w-1/2 border rounded-md shadow-lg bg-white py-4 overflow-auto'>
-            <p className='font-bold text-2xl'>Account</p>
+        <div className='flex h-2/3 w-full flex-col items-center self-center md:w-1/2 rounded-md shadow-lg bg-black-300 py-4 overflow-auto no-scrollbar'>
+            <p className='font-bold text-2xl text-gradient_pink-orange'>Account</p>
             <div className='flex mt-4 justify-center items-center text-gray-500'>
                 <WalletIcon className='h-12 w-12' />
                 <p>Wallets</p>
             </div>
             <p className='text-gray-400'>Connect and link Wallets to your account</p>
             <div className='border border-blue-400 rounded-md flex justify-between p-2 items-center w-4/5 m-4'>
-                <p className='text-gray-600'>{`${smartContractAddress.substring(0,7)}...${smartContractAddress.substring(smartContractAddress.length-3)}`}</p>
-                <span className='text-white bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-md'>Active</span>
+                <p className='text-gray-400'>{`${smartContractAddress.substring(0,7)}...${smartContractAddress.substring(smartContractAddress.length-3)}`}</p>
+                <span className='text-gray-500  p-2 rounded-md'>Active</span>
             </div>
             <div className='w-full flex flex-col my-2'>
                 <div className='text-gray-600 flex justify-center items-center'>
                     <UserCircleIcon className='h-8 w-8' />
-                    <p className=''>Linked Socials</p>
+                    <p className='text-gray-400'>Linked Socials</p>
                 </div>
                 {linkOptions.map((element,index) =>  {
                     return (
-                    <div key={index} className='border flex justify-between items-center w-full md:w-1/2 self-center rounded-md p-2 m-1'>
-                        <p className='text-gray-600'>{element.label}</p>
+                    <div key={index} className='border flex justify-between items-center w-full md:w-1/2 self-center rounded-md p-2 my-1 mx-2'>
+                        <p className='text-gray-300'>{element.label}</p>
                         <PlusCircleIcon 
-                        className="h-8 w-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white hover:cursor-pointer " 
+                        className={`${linkedOrNot(element.code)?'hidden':''} h-8 w-8 gradient_pink-orange rounded-full text-white hover:cursor-pointer`} 
                         onClick={element.action} />
+                        <p className={`${linkedOrNot(element.code)?'':'hidden'} text-gray-400`}>Already Linked</p>
                     </div>
                 )})}
             </div>
@@ -60,7 +74,7 @@ const Page = (props: Props) => {
                         <CreditCardIcon className='h-8 w-8' />
                         <div className='flex flex-1 justify-between items-center px-2'>
                             <p>Embedded Wallet</p>
-                            <p className='text-gray-400'>{`${eoaWalletAddress.substring(0,5)}...${eoaWalletAddress.substring(eoaWalletAddress.length-3)}`}</p>
+                            <p className='text-gray-400'>{`${eoaAddress.substring(0,5)}...${eoaAddress.substring(eoaAddress.length-3)}`}</p>
                         </div>
                     </div>
                     <div>
@@ -73,7 +87,7 @@ const Page = (props: Props) => {
                 </div>
             </div>
             <div className='w-5/6 flex items-center justify-around mt-4'>
-                <button className='bg-green-500 text-white rounded-3xl p-4'>Add funds</button>
+                {/* <button className='bg-green-500 text-white rounded-3xl p-4'>Add funds</button> */}
                 <button className='bg-green-500 text-white rounded-3xl p-4'>Withdraw Funds</button>
             </div>
         </div>

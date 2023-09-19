@@ -1,7 +1,11 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import PrivyProviderB from './providers/PrivyProvidersB'
-import ZeroDevProviderComponent from './providers/ZeroDevProviderComponent'
+import PrivyProviderB from '../lib/providers/PrivyProvidersB'
+import ZeroDevProviderComponent from '../lib/providers/ZeroDevProviderComponent'
+import {ToastContainer} from "react-toastify";
+import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
+import {Toaster} from "react-hot-toast";
 
 const APP_NAME = "Stable Pay Global";
 const APP_DESCRIPTION = "Enabling cross border payments";
@@ -43,9 +47,13 @@ export default function RootLayout({
     <html lang="en">
       <ZeroDevProviderComponent>
         <PrivyProviderB>
-          <body>
+          <Toaster />
+          <NavBar />
+          <body className='min-h-screen bg-black-100'>
+            {/* <ToastContainer /> */}
             {children}
           </body>
+          <Footer />
         </PrivyProviderB>
       </ZeroDevProviderComponent>
     </html>

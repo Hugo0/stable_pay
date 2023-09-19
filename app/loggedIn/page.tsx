@@ -16,6 +16,7 @@ import { Bars3Icon } from '@heroicons/react/24/outline';
 import { generalStore } from '@/store/GeneralStore';
 import Hamburger from '@/components/utils/Hamburger';
 import SendTransactionModal from '@/components/SendTransactionModal';
+import { parseCookies } from 'nookies';
 
 function LoggedIn() {
     const [transactionModalOpen,setTransactionOpen]=useState(false);
@@ -32,6 +33,7 @@ function LoggedIn() {
     const [eoaWalletAddress,setEoaWalletAddress,smartContractAddress,setSmartContractAddress]=userStore(state => [state.eoaWalletAddress,state.setEoaWalletAddress,state.smartContractAddress,state.setSmartContractAddress])
     const [loading,setLoading]=generalStore(state => [state.loading,state.setLoading]);
     const [amountSelected,setAmountSelected]=useState(0);
+    const userData=parseCookies().contractAddress;
 
     const swap= async () => {
         const temp=baseCurrency;
@@ -40,10 +42,6 @@ function LoggedIn() {
     }
 
    const {user,
-    linkEmail,
-    linkPhone,
-    linkGoogle,
-    linkWallet,
     ready,
     logout,
     authenticated,
@@ -76,15 +74,17 @@ function LoggedIn() {
                 setWalletBalance(ethStringAmount);
                 setEmbeddedWallet(embeddedWallet);
                 
-                if(smartContractAddress==="" || eoaWalletAddress===""){
+                if(!userData){
                     setEoaWalletAddress(embeddedWallet?.address || "");
                     setSmartContractAddress(user?.wallet?.address || "");
+                }else{
+                    console.log('address:',userData);
                 }
             }
             setLoading(false);
         }
         setUp();
-    },[wallets,ready,zeroDevReady,baseCurrency,router,setLoading,setEoaWalletAddress,setSmartContractAddress]);
+    },[wallets,ready,zeroDevReady]);
 
     if(ready && !authenticated)router.push("/");
 
@@ -113,10 +113,9 @@ function LoggedIn() {
    }
 
   return (
-    <div className='flex flex-col justify-center h-screen w-screen bg-gradient-to-r from-purple-500 to-pink-500'>
-        <Hamburger />
-        {transactionModalOpen && <SendTransactionModal />}
-    <div className='p-8 flex flex-col items-center bg-white w-full md:w-1/2 self-center rounded-md shadow-lg'>
+    <div className='flex flex-col justify-center h-screen w-screen bg-black-100'>
+        {transactionModalOpen && <SendTransactionModal modal={true} />}
+    <div className='p-8 flex flex-col items-center bg-banner w-full md:w-1/2 self-center rounded-md shadow-lg'>
         <p className='text-xl font-semibold underline'>My Balance</p>
         {/* <p className='mb-4'>User {user?.id} has linked following accounts:</p> */}
         {<p className='font-extrabold mb-10'>{walletBalance || "0.0"} {baseCurrency}</p>}
@@ -171,7 +170,7 @@ function LoggedIn() {
         {/* <p>The EOA Address : {embeddedWallet?.address}</p> */}
         {/* {zeroDevReady && <p>Smart Wallet Created!!!</p>} */}
         <div className='mt-2 flex'>
-            <button className='bg-green-500 hover:bg-green-600 m-4 py-2 px-4 rounded-lg text-white'>Add funds</button>
+            <button className='bg-gradient-to-r bg-purple-500 to-bg-pink-500 hover:bg-green-600 m-4 py-2 px-4 rounded-lg text-white'>Add funds</button>
             <button className='bg-green-500 hover:bg-green-600 m-4 py-2 px-4 rounded-lg text-white' onClick={handleSendTransactionOpen}>Send</button>
         </div>
         {/* <button onClick={handleMint} className='bg-green-500 hover:bg-green-600 mt-4 py-2 px-4'>Mint</button>

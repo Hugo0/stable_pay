@@ -5,6 +5,7 @@ import { User } from '@privy-io/react-auth'
 import { ethers } from 'ethers';
 import { useState } from 'react';
 import { QrReader } from 'react-qr-reader';
+import {toast} from "react-toastify";
 
 type Props = {
     user:any,
@@ -52,15 +53,41 @@ const SendTransaction = ({user,sendTransaction}: Props) => {
             chainId:80001,
             value:hexValue,
         }
-        const txUiConfig={
-            header:"Send Transaction",
-            description:"Send 0.001 eth to yourself",
-            buttonText:"Send",
+        // const txUiConfig={
+        //     header:"Send Transaction",
+        //     description:"Send 0.001 eth to yourself",
+        //     buttonText:"Send",
+        // }
+
+        if (user.wallet) {
+            // Show the loading toast
+            const loadingToastId = toast.loading('Sending transaction....', {
+                toastId: 'sendTransaction',
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: false, // Set autoClose to false to keep the toast open until manually dismissed
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+
+            try {
+                const tempHash = await sendTransaction(unsignedTx);
+                setTxHash(tempHash);
+                // Dismiss the loading toast when the transaction is successful
+                toast.dismiss(loadingToastId);
+
+                // Show the success toast
+                toast.success('Transaction Successful✅', {
+                toastId: 'sendTransaction',
+                });
+            } catch (error) {
+                // Handle errors if the transaction fails
+                console.error(error);
+                // You may want to show an error toast here as well
+            }
         }
-        if(user.wallet){
-            const tempHash=await sendTransaction(unsignedTx);
-            setTxHash(tempHash);
-        }
+
     }
 
   return (

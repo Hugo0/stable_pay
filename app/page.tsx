@@ -1,38 +1,19 @@
-"use client";
+import Login from '@/components/Login'
+import React from 'react'
 
-import Modal from "@/components/utils/Modal";
-import { useCurrencyStore } from "@/store/CurrencyStore";
-import { usePrivySmartAccount } from "@zerodev/privy";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+type Props = {}
 
-/** Add your relevant code here for the issue to reproduce */
-const content=["You need to login to access the app"]
-
-export default function Home() {
-  const {login,ready,authenticated}=usePrivySmartAccount();
-  const [baseCurrency]=useCurrencyStore(state => [state.baseCurrency]);
-  const router=useRouter();
-
-  useEffect(() => {
-    if(!window.matchMedia('(display-mode: standalone)').matches)router.push('/install');
-    else login();
-  },[]);
-
-  if(!ready)return <></>
-
-  if(authenticated && baseCurrency!=="")router.push("/loggedIn")
-  else if(authenticated)router.push("/baseCurrency");
-
+const Home = async (props: Props) => {
   return (
-    <div className="text-center h-screen w-screen flex items-center justify-center flex-col">
-      <Modal title="Please Login" content={content} />
-      <button
-        className="fixed bottom-12 px-4 py-2 rounded text-white bg-blue-500 hover:bg-blue-600"
-        onClick={login}
-      >
-        Log In
-      </button>
-    </div>
+    <main className="flex-center paddings mx-auto w-full max-w-screen-2xl flex-col">
+        <section className="nav-padding w-full">
+            <div className="flex-center relative min-h-[274px] w-full flex-col rounded-xl bg-banner bg-cover bg-center text-center">
+            <h1 className="sm:heading1 heading2 mb-6 text-center text-white">KeyChain Global Payments</h1>
+            </div>
+        </section>
+        <Login />
+    </main>
   )
 }
+
+export default Home

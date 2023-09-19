@@ -2,14 +2,16 @@
 
 // import { userStore } from "@/store/UserStore";
 import { PrivyProvider } from "@privy-io/react-auth";
-// import { usePrivySmartAccount } from "@zerodev/privy";
+import { setCookie } from "nookies";
 
-const HandleLogin=() => {
-    // router.push('/baseCurrency');
-    // console.log(`User created: ${user.id}`)
-    // const [setSmartContractAddress]=userStore(state => [state.setSmartContractAddress]);
+const HandleLogin=async (user:any,isNewUser:any) => {
     // const {user}=usePrivySmartAccount();
-    // setSmartContractAddress(user?.wallet?.address || "");
+    if(user?.wallet){
+        setCookie(null,'eoaAddress',JSON.stringify(user?.wallet?.address),{
+            maxAge: 30 * 24 * 60 * 60, // 30 days in seconds
+            path: '/', // Cookie available to all paths
+        })
+    }
 }
 
 function PrivyProviderB({children}:{children: React.ReactNode}){
@@ -34,7 +36,7 @@ function PrivyProviderB({children}:{children: React.ReactNode}){
             appearance:{
                 accentColor:"#676FFF",
                 theme:"light",
-                logo:"icon-192x192.png",
+                logo:"payments.png",
             },
         }}
 

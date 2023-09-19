@@ -5,7 +5,7 @@ type Props={
 
 function Modal({title,content}:Props) {
     return (
-      <div className='flex h-screen w-screen items-center justify-center bg-gradient-to-r from-purple-500 to-pink-500'>
+      <div className='flex h-screen w-screen items-center justify-center bg-black'>
           <div className="h-screen w-screen max-w-2xl max-h-full px-4 flex items-center justify-center">
               <div className="bg-white rounded-lg relative md:w-full">
                   <div className="flex items-center justify-center p-4 border-b rounded-t">
