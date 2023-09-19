@@ -22,7 +22,9 @@ const Scan = (props: Props) => {
                 }}
                 constraints={
                     {
-                        // facingMode:'user'
+                        // width:'100px',
+
+                        facingMode:'environment'
                     }
                 }
                 
