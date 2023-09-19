@@ -9,7 +9,7 @@ const Scan = (props: Props) => {
   return (
     <div>
         {receiverAddress===""? (
-        <div className='h-screen w-screen md:w-1/2 bg-white-400'>
+        <div className='h-[100px] w-[100px] md:w-1/2 bg-white-400'>
             <QrReader 
                 onResult={(result, error) => {
                     if (!!result) {
@@ -27,7 +27,7 @@ const Scan = (props: Props) => {
                         facingMode:'environment'
                     }
                 }
-                
+                className="h-full w-full"
             />
         </div>
         ):(

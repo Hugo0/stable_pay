@@ -22,7 +22,7 @@ const QrCode = (props: Props) => {
     },[zeroDevReady,authenticated,ready]);
   return (
     <div className="h-screen w-screen flex justify-center items-center">
-        <div className="flex h-1/2 w-5/6 flex-col justify-center items-center self-center rounded-md shadow-lg bg-black-300 py-4 overflow-auto">
+        <div className="flex h-1/2 w-5/6 flex-col justify-center items-center self-center rounded-md shadow-lg bg-white py-4 overflow-auto">
             <QRCode
                 size={256}
                 style={{ height: "auto", maxWidth: "100%", width: "100%" }}
