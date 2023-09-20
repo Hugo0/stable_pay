@@ -9,7 +9,7 @@ const Scan = (props: Props) => {
   return (
     <div>
         {receiverAddress===""? (
-        <div className='h-full md:h-[40vh] w-full md:w-1/2 bg-white-400'>
+        <div className='h-[400px] md:h-[40vh] w-full md:w-1/2 bg-black-300'>
             <QrReader 
                 onResult={(result, error) => {
                     if (!!result) {
