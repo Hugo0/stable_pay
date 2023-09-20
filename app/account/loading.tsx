@@ -1,8 +1,8 @@
-import Loading from '@/components/Loading'
+import LoadingComponent from '@/components/LoadingComponent'
 
 function LoadingScreen() {
   return (
-    <Loading />
+    <LoadingComponent />
   )
 }
 

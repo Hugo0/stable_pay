@@ -5,7 +5,7 @@ import { usePrivySmartAccount } from '@zerodev/privy';
 import { useEffect, useState } from 'react';
 
 type Props = {}
-export const revalidate=300;
+// export const revalidate=300;
 
 const Page = (props: Props) => {
     const {linkEmail,linkDiscord,linkGoogle,linkTwitter,linkPhone,exportWallet,user,zeroDevReady,login}=usePrivySmartAccount();

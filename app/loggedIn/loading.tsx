@@ -1,9 +1,8 @@
-import Loading from '@/components/Loading'
-import React from 'react'
+import LoadingComponent from '@/components/LoadingComponent'
 
 function LoadingScreen() {
   return (
-    <Loading />
+    <LoadingComponent />
   )
 }
 

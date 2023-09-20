@@ -1,9 +1,11 @@
 import LoadingComponent from '@/components/LoadingComponent'
 
-function LoadingScreen() {
+type Props = {}
+
+const loading = (props: Props) => {
   return (
     <LoadingComponent />
   )
 }
 
-export default LoadingScreen
+export default loading

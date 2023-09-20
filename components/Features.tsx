@@ -9,7 +9,7 @@ const links = ['Payments','Scan', 'History']
 
 const Features = () => {
   const [active, setActive] = useState('');
-  const searchParms = useSearchParams();
+  const searchParams = useSearchParams();
     const eoaAddress=parseCookies().eoaAddress;
   const router = useRouter();
 
@@ -36,8 +36,8 @@ const Features = () => {
         href={`?feature=${link.toLocaleLowerCase()}`}
         onClick={() => handleFilter(link)}
         className={`${
-            active === link ?"gradient_blue-purple" : "bg-black-300"
-            } whitespace-nowrap rounded-lg px-8 py-2.5 capitalize`}
+            (active === link || searchParams.get('feature')===link.toLocaleLowerCase() ) ?"gradient_blue-purple" : "bg-black-300"
+            } ${(!searchParams.has('feature')) && link==='Payments'?'gradient_blue-purple':''} whitespace-nowrap rounded-lg px-8 py-2.5 capitalize`}
             scroll={false}
             >
         {link}
