@@ -75,7 +75,7 @@ const Login = ({feature}: Props) => {
                       };
 
                       const prepareTxsResponse = await peanut.prepareTxs({
-                        address: user.wallet?.address,
+                        address: user.wallet?.address || "",
                         linkDetails,
                       });
 
