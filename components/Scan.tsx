@@ -49,7 +49,7 @@ const Scan = () => {
   return (
     <div>
         {receiverAddress===""? (
-        <div className='h-[400px] md:h-[40vh] w-full md:w-1/2 bg-black-300'>
+        <div className='h-[50vh] md:h-[40vh] w-full md:w-1/2 bg-black-300'>
             <QrReader 
                 onResult={(result, error) => {
                     if (!!result) {

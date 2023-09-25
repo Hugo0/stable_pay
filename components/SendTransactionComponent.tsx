@@ -144,7 +144,7 @@ const SendTransactionComponent = (props:Props) => {
             <div className="h-5/6 w-full md:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around">
                 <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
-                    <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white" placeholder="Enter the receiver's contract address" />
+                    <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter the receiver's contract address" />
                 </div>
                 <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
                     <p className="text-gradient_blue-purple text-3xl font-bold">You Send:</p>
