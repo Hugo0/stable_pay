@@ -148,7 +148,7 @@ const SendTransactionComponent = (props:Props) => {
                 </div>
                 <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
                     <p className="text-gradient_blue-purple text-3xl font-bold">You Send:</p>
-                    <input onChange={handleInputChange} type="text" value={value} className="outline-none flex items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white" placeholder="Enter Amount" />
+                    <input onChange={handleInputChange} type="text" value={value} className="outline-none flex items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter Amount" />
                     <p className="text-gradient_blue-purple text-3xl font-bold flex-center gap-x-1">{baseCurrency}
                         <ArrowDownIcon className="h-7 w-7 text-white hover:cursor-pointer" onClick={() => handleDropDown("b")} />
                     </p>
