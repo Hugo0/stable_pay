@@ -119,6 +119,7 @@ const SendTransactionComponent = (props:Props) => {
                 hashId:hashId,
                 sender_currency:baseCurrency,
                 receiver_currency:receiverCurrency,
+                sentAmount:value,
             }
             setLoading(false);
             toast.success("Successfully Sent!!",{
@@ -141,24 +142,24 @@ const SendTransactionComponent = (props:Props) => {
     <div className="h-screen w-screen relative flex-center z-50 backdrop-blur-lg">
         {dropDownOpen? (<SetCurrency />):(
             <div className="h-5/6 w-full md:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around">
-                <div className="flex-center gap-x-3">
+                <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
                     <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white" placeholder="Enter the receiver's contract address" />
                 </div>
-                <div className="flex-center gap-x-2">
+                <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
                     <p className="text-gradient_blue-purple text-3xl font-bold">You Send:</p>
                     <input onChange={handleInputChange} type="text" value={value} className="outline-none flex items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white" placeholder="Enter Amount" />
                     <p className="text-gradient_blue-purple text-3xl font-bold flex-center gap-x-1">{baseCurrency}
                         <ArrowDownIcon className="h-7 w-7 text-white hover:cursor-pointer" onClick={() => handleDropDown("b")} />
                     </p>
                 </div>
-                <div className="flex-center gap-x-3">
+                <div className="flex-center flex-col md:flex-row gap-x-3 gap-y-3">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">They receive:</p>
                     <p className=" text-gradient_purple-blue text-3xl font-bold flex-center">{receiverAmount} {receiverCurrency}
                     <ArrowDownIcon className="h-7 w-7 text-white pl-2 hover:cursor-pointer" onClick={() => handleDropDown("r")} />
                     </p>
                 </div>
-                <div className="text-3xl flex-center hover:cursor-pointer">
+                <div className="text-3xl flex-center flex-col md:flex-row hover:cursor-pointer">
                     <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleSubmit}>{loading?'Sending...':'Send Funds'}</button>
                 </div>
             </div>
