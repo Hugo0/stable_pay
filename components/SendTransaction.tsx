@@ -1,43 +1,13 @@
 "use client";
 
 import { userStore } from '@/store/UserStore';
-import { User } from '@privy-io/react-auth'
 import { ethers } from 'ethers';
 import { useState } from 'react';
-import { QrReader } from 'react-qr-reader';
-// import {toast} from "react-toastify";
 import toast from "react-hot-toast";
 
 type Props = {
     user:any,
     sendTransaction:any
-}
-
-const Popup=() => {
-    const [receiverAddress,setReceiverAddress]=useState("");
-    return (
-        <div className='h-screen w-screen'>
-            <QrReader
-                onResult={(result, error) => {
-                    if (!!result) {
-                      setReceiverAddress(result?.getText());
-                    }
-          
-                    if (!!error) {
-                      console.info(error);
-                    }
-                  }}
-                  constraints={
-                    {
-                        // facingMode:'user'
-                    }
-                  }
-                //   style={{ width: '100%' }}
-            />
-            {receiverAddress!=="" && <p>{receiverAddress}</p>}
-        </div>
-
-    )
 }
 
 const SendTransaction = ({user,sendTransaction}: Props) => {
@@ -61,16 +31,6 @@ const SendTransaction = ({user,sendTransaction}: Props) => {
         // }
 
         if (user.wallet) {
-            // Show the loading toast
-            // const loadingToastId = toast.loading('Sending transaction....', {
-            //     toastId: 'sendTransaction',
-            //     position: toast.POSITION.TOP_RIGHT,
-            //     autoClose: false, // Set autoClose to false to keep the toast open until manually dismissed
-            //     hideProgressBar: false,
-            //     closeOnClick: true,
-            //     pauseOnHover: true,
-            //     draggable: true,
-            // });
 
             try {
                 const tempHash = await sendTransaction(unsignedTx);
@@ -93,7 +53,6 @@ const SendTransaction = ({user,sendTransaction}: Props) => {
 
   return (
     <div>
-        {popupOpen && <Popup />}
         <button
             disabled={!user?.wallet}
             className='mt-4 py-2 px-4 bg-green-500 hover:bg-green-600 rounded text-white'

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { parseCookies } from 'nookies'
 import Link from 'next/link'
 
@@ -10,10 +10,9 @@ const links = ['Payments','Scan', 'History']
 const Features = () => {
   const [active, setActive] = useState('');
   const searchParams = useSearchParams();
-    const eoaAddress=parseCookies().eoaAddress;
-  const router = useRouter();
+  const eoaAddress=parseCookies().eoaAddress;
 
-  console.log(eoaAddress);
+  // console.log(eoaAddress);
 
   const handleFilter = async (link: string) => {
     let newUrl = '';
@@ -25,7 +24,6 @@ const Features = () => {
       setActive(link);
     }
     
-    // await router.push(`?feature=${active}`, { scroll: false });
   }
 
   return (

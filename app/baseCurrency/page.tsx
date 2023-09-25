@@ -1,5 +1,5 @@
 // "use client";
-import DropDownButton from '@/components/utils/DropDownButton';
+import DropDownButton from '@/components/DropDownButton';
 
 type Props = {}
 

@@ -66,9 +66,11 @@ function LoggedIn() {
                     await provider.request({method: "wallet_switchEthereumChain",
                     params:[{chainId: `0x${Number(80001).toString(16)}`}]
                 })
+                // await provider.request({})
                 const ethProvider=new ethers.providers.Web3Provider(provider);
+                await ethProvider.getSigner(user?.wallet?.address);
                 const walletBalance=await ethProvider.getBalance(
-                    embeddedWallet.address
+                    user?.wallet?.address || ""
                 )
                 const ethStringAmount=ethers.utils.formatEther(walletBalance);
                 setWalletBalance(ethStringAmount);

@@ -2,7 +2,9 @@
 import { ArrowUpOnSquareIcon, CreditCardIcon, PlusCircleIcon, UserCircleIcon, WalletIcon } from '@heroicons/react/24/outline';
 import { useWallets } from '@privy-io/react-auth';
 import { usePrivySmartAccount } from '@zerodev/privy';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import clipboard from 'clipboard-copy';
+import toast from "react-hot-toast";
 
 type Props = {}
 // export const revalidate=300;
@@ -39,6 +41,19 @@ const Page = (props: Props) => {
         }
     },[zeroDevReady]);
 
+    const handleCopy=async (e: React.MouseEvent<HTMLInputElement>) => {
+        if(smartContractAddress==="")return ;
+        try {
+            const copyingToast=toast.loading("Copying to clipboard...");
+            await clipboard(smartContractAddress);
+            toast.success("Successfully copied!",{
+                id:copyingToast
+            })
+        } catch (err) {
+            console.error('Failed to copy to clipboard: ', err);
+        }
+    }
+
   return (
     <div className='h-screen w-screen flex justify-center items-center bg-gradient-to-r from-purple-500 to-pink-500'>
         <div className='flex h-2/3 w-full flex-col items-center self-center md:w-1/2 rounded-md shadow-lg bg-black-300 py-4 overflow-auto no-scrollbar'>
@@ -50,7 +65,7 @@ const Page = (props: Props) => {
             <p className='text-gray-400'>Connect and link Wallets to your account</p>
             <div className='border border-blue-400 rounded-md flex justify-between p-2 items-center w-4/5 m-4'>
                 <p className='text-gray-400'>{`${smartContractAddress.substring(0,7)}...${smartContractAddress.substring(smartContractAddress.length-3)}`}</p>
-                <span className='text-gray-500  p-2 rounded-md'>Active</span>
+                <span onClick={handleCopy} className='text-gray-400 p-2 rounded-md hover:cursor-pointer'>Copy</span>
             </div>
             <div className='w-full flex flex-col my-2'>
                 <div className='text-gray-600 flex justify-center items-center'>
@@ -88,7 +103,7 @@ const Page = (props: Props) => {
             </div>
             <div className='w-5/6 flex items-center justify-around mt-4'>
                 {/* <button className='bg-green-500 text-white rounded-3xl p-4'>Add funds</button> */}
-                <button className='bg-green-500 text-white rounded-3xl p-4'>Withdraw Funds</button>
+                <button className='gradient_pink-orange text-white rounded-3xl p-4'>Withdraw Funds</button>
             </div>
         </div>
     </div>

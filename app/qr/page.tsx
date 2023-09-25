@@ -1,10 +1,13 @@
-import QrCode from "@/components/QRCode"
+import LoadingComponent from "@/components/LoadingComponent"
+import dynamic from "next/dynamic"
 
-type Props = {}
+const QrCode = dynamic(() => import ('@/components/QRCode'),{
+    loading:() => <LoadingComponent />
+})
 
 // export const revalidate=300;
 
-const QRCode = (props: Props) => {
+const QRCode = () => {
   return (
     <QrCode />
   )

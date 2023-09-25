@@ -1,4 +1,6 @@
+import React from "react";
 import Scan from "./Scan";
+import SendTransactionComponent from "./SendTransactionComponent";
 
 type Props = {
     feature:string | string[] | undefined;
@@ -8,6 +10,8 @@ const Body = (props:Props) => {
     const {feature}=props;
     if(feature==='scan'){
         return <Scan />
+    }else if(feature==="payments" || feature===""){
+        return <SendTransactionComponent />
     }
   return (
     <div>
@@ -17,5 +21,5 @@ const Body = (props:Props) => {
     </div>
   )
 }
-
-export default Body
+ 
+export default React.memo(Body)

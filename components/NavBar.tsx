@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import NavBarLoggedInState from './NavBarLoggedInState'
 
 type Props = {}
 
@@ -11,31 +12,7 @@ const NavBar = () => {
         <Link href="/">
           <Image src='/payments.png' width={55} height={40} alt='KeyChain logo' className='rounded' />
         </Link>
-
-        {/* <Image 
-          src="/hamburger-menu.svg"
-          width={30}
-          height={30}
-          alt="Hamburger menu"
-          className="block md:hidden"
-        /> */}
-
-        <ul className="flex-center gap-x-3  md:gap-x-10">
-          <li className="body-text text-gradient_blue-purple !font-bold">
-            <Link
-              href="/qr"
-            >
-              Add Funds
-            </Link>
-          </li>
-          <li className="body-text !font-bold text-gradient_pink-orange">
-            <Link
-              href="/account"
-            >
-              Account
-            </Link>
-          </li>
-        </ul>
+        <NavBarLoggedInState />
       </div>
     </nav>
   )

@@ -1,10 +1,20 @@
-import Login from '@/components/Login'
 
-type Props = {}
+import LoadingComponent from '@/components/LoadingComponent';
+import { connectToDatabase } from '@/database';
+// import Login from '@/components/Login'
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
+const Login =dynamic(() => 
+  import ('@/components/Login')
+,{
+  loading: () => <LoadingComponent />
+})
 
 const Home = async ({searchParams}:{searchParams: {[key:string]:string | string[] | undefined}}) => {
   console.log('searchParams:',searchParams);
   const feature=searchParams.feature || "";
+  connectToDatabase().then(() => console.log('Success!!!'));
   return (
     <main className="flex-center paddings mx-auto w-full max-w-screen-2xl flex-col">
         <section className="nav-padding w-full">
