@@ -67,35 +67,35 @@ const Login = ({feature}: Props) => {
 
                       }).catch(error => console.log(error));
 
-                      const linkDetails = {
-                        chainId: Number(80001),
-                        tokenAmount: Number(0.01),
-                        tokenType: user.wallet?.chainId,
-                        tokenAddress: user.wallet?.address,
-                      };
+                    //   const linkDetails = {
+                    //     chainId: Number(80001),
+                    //     tokenAmount: Number(0.01),
+                    //     tokenType: user.wallet?.chainId,
+                    //     tokenAddress: user.wallet?.address,
+                    //   };
 
-                      const prepareTxsResponse = await peanut.prepareTxs({
-                        address: user.wallet?.address || "",
-                        linkDetails,
-                      });
+                    //   const prepareTxsResponse = await peanut.prepareTxs({
+                    //     address: user.wallet?.address || "",
+                    //     linkDetails,
+                    //   });
 
-                      const signedTxs = await Promise.all(
-                        prepareTxsResponse.unsignedTxs.map((unsignedTx: any) =>
-                          peanut.signAndSubmitTx({
-                            structSigner: {
-                              signer: signer,
-                            },
-                            unsignedTx,
-                          })
-                        )
-                      );
+                    //   const signedTxs = await Promise.all(
+                    //     prepareTxsResponse.unsignedTxs.map((unsignedTx: any) =>
+                    //       peanut.signAndSubmitTx({
+                    //         structSigner: {
+                    //           signer: signer,
+                    //         },
+                    //         unsignedTx,
+                    //       })
+                    //     )
+                    //   );
 
-                      const links = await peanut.getLinksFromTx({
-                        linkDetails,
-                        txHash: signedTxs[signedTxs.length - 1]?.txHash,
-                      });
+                    //   const links = await peanut.getLinksFromTx({
+                    //     linkDetails,
+                    //     txHash: signedTxs[signedTxs.length - 1]?.txHash,
+                    //   });
                   
-                      console.log("links:",links);
+                    //   console.log("links:",links);
                   
 
                 }
