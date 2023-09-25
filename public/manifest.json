@@ -1,30 +1,30 @@
 {
-    "theme_color": "#f69435",
-    "background_color": "#f69435",
+    "theme_color": "#000000",
+    "background_color": "#000000",
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
-    "name": "Stable Pay Global",
-    "short_name": "Stable Pay",
+    "name": "Keychain",
+    "short_name": "Keychain",
     "description": "Make Global payments at ease ",
     "icons": [
         {
-            "src": "/icon-192x192.png",
+            "src": "/payments.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/icon-256x256.png",
+            "src": "/payments.png",
             "sizes": "256x256",
             "type": "image/png"
         },
         {
-            "src": "/icon-384x384.png",
+            "src": "/payments.png",
             "sizes": "384x384",
             "type": "image/png"
         },
         {
-            "src": "/icon-512x512.png",
+            "src": "/payments.png",
             "sizes": "512x512",
             "type": "image/png"
         }
