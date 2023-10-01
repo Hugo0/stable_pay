@@ -8,6 +8,7 @@ const transactionSchema = new mongoose.Schema(
         },
         receiverAddress: {
             type: String,
+            default:"",
         },
         sentAmount:{
             type:Number,
@@ -15,9 +16,7 @@ const transactionSchema = new mongoose.Schema(
         },
         exchangeRate: {
             type: Number,
-        },
-        fees: {
-            type: Number,
+            default:1.0,
         },
         category:{
             type:String,
@@ -29,6 +28,7 @@ const transactionSchema = new mongoose.Schema(
         },
         hashId:{
             type:String,
+
         },
         sender_currency:{
             type:String, //baseCurrency 
@@ -41,12 +41,15 @@ const transactionSchema = new mongoose.Schema(
                 5-> claim link 
                 6-> transaction is updated with the receiver address 
             */
+           default:"USD",
         },
         receiver_currency:{
             type:String, //quoteCurrency -> via link we're updating quote currency 
+            default:"INR",
         },
         link:{
             type:String,
+            default:'',
         }
     },
     {

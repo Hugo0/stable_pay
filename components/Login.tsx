@@ -10,6 +10,7 @@ import { connectToDatabase } from '@/database';
 import { useWallets } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import peanut from '@squirrel-labs/peanut-sdk';
+import { setCookie } from 'nookies';
 
 type Props = {
     feature:string | string[] | undefined,
@@ -39,6 +40,12 @@ const Login = ({feature}: Props) => {
                 const embeddedWallet=wallets.find((wallet) => wallet.walletClientType === "privy");
                 if(embeddedWallet){
                     console.log("Eoa:",embeddedWallet.address);
+                    if(user?.wallet){
+                        setCookie(null,'smartContractAddress',JSON.stringify(user?.wallet?.address),{
+                            maxAge: 30 * 24 * 60 , // 1 day in seconds
+                            path: '/', // Cookie available to all paths
+                        })
+                    }
                     const provider = await embeddedWallet.getEthereumProvider();
                         await provider.request({method: "wallet_switchEthereumChain",
                         params:[{chainId: `0x${Number(80001).toString(16)}`}]

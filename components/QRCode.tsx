@@ -5,11 +5,13 @@ import React,{ useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import clipboard from 'clipboard-copy';
 import toast from "react-hot-toast";
+import { parseCookies } from "nookies";
+import LoadingComponent from "./LoadingComponent";
 
 
 const QrCode = () => {
     const {authenticated,zeroDevReady,user,login} =usePrivySmartAccount();
-    const [smartContractAddress,setSmartContractAddress]=useState('');
+    const [smartContractAddress,setSmartContractAddress]=useState(parseCookies().smartContractAddress);
     useEffect(() => {
         if(!authenticated || !zeroDevReady){
             login();
@@ -31,19 +33,24 @@ const QrCode = () => {
     }
 
   return (
-    <div className="h-screen w-screen flex-center flex-col">
-        <div className="flex h-1/2 w-5/6 md:w-1/2 flex-col justify-center items-center self-center rounded-md shadow-lg bg-white py-4 overflow-auto">
-            <QRCode
-                size={256}
-                style={{ height: "auto", maxWidth: "90%", width: "100%" }}
-                value={smartContractAddress}
-                viewBox={`0 0 256 256`}
-                className="h-full w-full"
-            />
-        </div>
-        <div onClick={handleCopy} className="hover:cursor-pointer text-gradient_blue-purple bg-black-400 mt-10 heading3 p-4 rounded">Copy to Clipboard</div>
-    </div>
+    <>
+      {zeroDevReady? (
+            <div className="h-screen w-screen flex-center flex-col">
+                <div className="flex h-1/2 w-5/6 md:w-1/2 flex-col justify-center items-center self-center rounded-md shadow-lg bg-white py-4 overflow-auto">
+                    <QRCode
+                        size={256}
+                        style={{ height: "auto", maxWidth: "90%", width: "100%" }}
+                        value={smartContractAddress}
+                        viewBox={`0 0 256 256`}
+                        className="h-full w-full"
+                    />
+                </div>
+                <div onClick={handleCopy} className="hover:cursor-pointer text-gradient_blue-purple bg-black-400 mt-10 heading3 p-4 rounded">Copy to Clipboard</div>
+            </div>
+            ):
+        <LoadingComponent />}
+    </>
   )
 }
 
-export default React.memo(QrCode)
+export default QrCode

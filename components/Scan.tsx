@@ -1,9 +1,14 @@
 "use client";
 import { usePrivySmartAccount } from '@zerodev/privy';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { QrReader } from 'react-qr-reader'
 import peanut from '@squirrel-labs/peanut-sdk';
-import SendTransactionComponent from './SendTransactionComponent';
+import dynamic from "next/dynamic"
+import LoadingComponent from "./LoadingComponent";
+
+const SendTransactionComponent = dynamic(() => import("./SendTransactionComponent"),{
+    loading: () => <LoadingComponent />
+})
 
 type Wallet = {
     address : string | undefined,
@@ -49,7 +54,7 @@ const Scan = () => {
   return (
     <div>
         {receiverAddress===""? (
-        <div className='h-[50vh] md:h-[40vh] w-full md:w-1/2 bg-black-300'>
+        <div className='h-screen md:h-[40vh] w-full md:w-1/2 bg-white'>
             <QrReader 
                 onResult={(result, error) => {
                     if (!!result) {

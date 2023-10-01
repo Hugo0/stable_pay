@@ -1,11 +1,21 @@
 "use client";
 
 import { ArrowDownIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {fiatCurrencies} from "@/lib/fiatCurrencies"
 import toast from "react-hot-toast";
 import { usePrivySmartAccount } from "@zerodev/privy";
 import { ethers } from "ethers";
+
+import dynamic from "next/dynamic";
+import LoadingComponent from "./LoadingComponent";
+import getConversionAmount from "./utils/getConversion";
+
+const WalletComponent=dynamic(() => 
+    import("./WalletComponent")
+,{
+    loading: () => <LoadingComponent />
+} )
 
 
 type Props={
@@ -18,16 +28,28 @@ type CurrencyProps={
 }
 
 const SendTransactionComponent = (props:Props) => {
-    const [value, setValue] = useState('');
+    const [value, setValue] = useState<string>('');
     const [receiverAmount,setReceiverAmount]=useState(0.0);
     const [receiverAddress,setReceiverAddress]=useState<string>(props.receiverAdress || "");
     const [receiverCurrency,setReceiverCurrency]=useState<string>("INR");
     const [baseCurrency,setBaseCurrency]=useState<string>("USD");
-    const [dropDownOpen,setDropDownOpen]=useState<boolean>(false);
+    const [dropDownOpen,setDropDownOpen]=useState<boolean>(true);
     const [currecySelected,setCase]=useState<string>("");
     const [loading,setLoading]=useState(false);
     const {sendTransaction,user}=usePrivySmartAccount();
-    
+    const [exRate,setExRate]=useState(0.0);
+
+    useEffect(() => {
+        const fetcher= async () => {
+            setLoading(true);
+            const rate=await getConversionAmount(baseCurrency,receiverCurrency,1);
+            setExRate(Number(rate.toFixed(3)));
+            setLoading(false);
+        }
+        fetcher();
+        setDropDownOpen(!dropDownOpen);
+    },[baseCurrency,receiverCurrency]);
+
     const SetCurrency= () => {
         const [currencies,setCurrencies]=useState(fiatCurrencies);
         const [searchQuery,setSearchQuery]=useState("");
@@ -46,7 +68,7 @@ const SendTransactionComponent = (props:Props) => {
             }else{
                 setReceiverCurrency(currency_code);
             }
-            setDropDownOpen(false);
+            // setDropDownOpen(false);
         }   
     
         return (
@@ -73,19 +95,24 @@ const SendTransactionComponent = (props:Props) => {
     
     }
 
-    const handleReceiverAdress=(e:ChangeEvent<HTMLInputElement>) => {
+    const handleReceiverAdress=async (e:ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
         setReceiverAddress(inputValue);
       };
 
     // This function ensures that the input only contains numbers
-    const handleInputChange = (e:ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange =async  (e:ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
         // Use a regular expression to allow only numbers (0-9)
-        const sanitizedValue = inputValue.replace(/[^0-9]/g, '');
-        setValue(sanitizedValue);
-        setReceiverAmount(82.15*Number(sanitizedValue));
+        // const sanitizedValue = inputValue.replace(/[^0-9]/g, '');
+        setValue(inputValue);
+        const recevingAmount=exRate*Number(inputValue);
+        setReceiverAmount(Number(recevingAmount.toFixed(3)));
     };
+
+    useEffect(() => {
+        setReceiverAmount(exRate*Number(value));
+    },[exRate]);
 
     const handleDropDown=(input:string) => {
         setCase(input);
@@ -101,7 +128,7 @@ const SendTransactionComponent = (props:Props) => {
         try{
             setLoading(true);
             const sendingFundsId=toast.loading("Sending Funds...");
-            const ethAmount=value;
+            const ethAmount=receiverAmount.toString();
             const weiValue =ethers.utils.parseEther(ethAmount);
             const hexValue= ethers.utils.hexlify(weiValue);
             const unsignedTx={
@@ -109,7 +136,7 @@ const SendTransactionComponent = (props:Props) => {
                 chainId:80001,
                 value:hexValue,
             }
-            const hashId=await sendTransaction(unsignedTx);
+            const hashId=await sendTransaction(unsignedTx); //user.wallet.address
 
             const bodyObj={
                 senderAddress:user.wallet?.address,
@@ -119,7 +146,8 @@ const SendTransactionComponent = (props:Props) => {
                 hashId:hashId,
                 sender_currency:baseCurrency,
                 receiver_currency:receiverCurrency,
-                sentAmount:value,
+                sentAmount:Number(receiverAmount),
+                exchangeRate:Number(exRate),
             }
             setLoading(false);
             toast.success("Successfully Sent!!",{
@@ -142,16 +170,21 @@ const SendTransactionComponent = (props:Props) => {
     <div className="h-screen w-screen relative flex-center z-50 backdrop-blur-lg">
         {dropDownOpen? (<SetCurrency />):(
             <div className="h-5/6 w-full md:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around">
+                <WalletComponent />
                 <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
                     <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter the receiver's contract address" />
                 </div>
                 <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
                     <p className="text-gradient_blue-purple text-3xl font-bold">You Send:</p>
-                    <input onChange={handleInputChange} type="text" value={value} className="outline-none flex items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter Amount" />
-                    <p className="text-gradient_blue-purple text-3xl font-bold flex-center gap-x-1">{baseCurrency}
+                    <input onChange={handleInputChange} type="number" step="0.01" value={value} className="outline-none flex items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter Amount" />
+                    <p className="text-gradient_purple-blue text-3xl font-bold flex-center gap-x-1">{baseCurrency}
                         <ArrowDownIcon className="h-7 w-7 text-white hover:cursor-pointer" onClick={() => handleDropDown("b")} />
                     </p>
+                </div>
+                <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
+                    <p className="text-gradient_blue-purple text-xl font-bold">Exchange Rate:</p>
+                    {loading ? <LoadingComponent />:<p className="text-gradient_purple-blue text-xl font-bold">{exRate}</p>}
                 </div>
                 <div className="flex-center flex-col md:flex-row gap-x-3 gap-y-3">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">They receive:</p>
@@ -160,7 +193,7 @@ const SendTransactionComponent = (props:Props) => {
                     </p>
                 </div>
                 <div className="text-3xl flex-center flex-col md:flex-row hover:cursor-pointer">
-                    <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleSubmit}>{loading?'Sending...':'Send Funds'}</button>
+                    <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleSubmit}>{loading?'Please Wait...':'Send Funds'}</button>
                 </div>
             </div>
         )}
