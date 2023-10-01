@@ -50,7 +50,7 @@ const HistoryComponent = () => {
     
   return (
     <div className="h-screen w-screen flex-center">
-        <div className="h-5/6 w-1/2 md:w-1/2 bg-black-400 py-2 flex-center flex-col overflow-auto shadow shadow-white-400 rounded no-scrollbar">
+        <div className="h-5/6 w-full md:w-1/2 bg-black-400 py-2 flex-center flex-col overflow-auto shadow shadow-white-400 rounded no-scrollbar">
             {transactions.length>0 && transactions.map((transaction:TransactionProps) => {
                 const amount=Number(transaction.sentAmount)/Number(transaction.exchangeRate);
                 const showAmount=Number(amount.toFixed(3));
