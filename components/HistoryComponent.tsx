@@ -55,7 +55,7 @@ const HistoryComponent = () => {
                 const amount=Number(transaction.sentAmount)/Number(transaction.exchangeRate);
                 const showAmount=Number(amount.toFixed(3));
                 return (
-                    <div className="h-8 w-full bg-black-300 text-white-400 m-1 py-10 flex items-center justify-around rounded">
+                    <div key={transaction.hashId} className="h-8 w-full bg-black-300 text-white-400 m-1 py-10 flex items-center justify-around rounded">
                         <p className="heading4 text-gradient_blue-purple">Amount: {showAmount} {transaction.sender_currency}</p>
                         {/* <Link href={`/transactions/${transaction.hashId}`}>View More</Link> */}
                         <Link href={`https://app.jiffyscan.xyz/bundle/${transaction.hashId}?network=mumbai`} target="_blank" className="text-gradient_pink-orange">View on Chain</Link>
