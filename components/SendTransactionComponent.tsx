@@ -149,7 +149,9 @@ const SendTransactionComponent = (props:Props) => {
         const sendingFundsId=toast.loading("Sending Funds...");
         try{
             setLoading(true);
-            const ethAmount=receiverAmount.toString();
+            const rate=await getConversionAmount("usd",baseCurrency,1);
+            const amount=Number(value)/rate;
+            const ethAmount=amount.toString();
             const weiValue =ethers.utils.parseEther(ethAmount);
             const hexValue= ethers.utils.hexlify(weiValue);
             const unsignedTx={
@@ -195,49 +197,49 @@ const SendTransactionComponent = (props:Props) => {
     const handleLinkTransfer = async () => {
         if(embeddedWallet){
             const provider = await embeddedWallet.getEthereumProvider();
-                            await provider.request({method: "wallet_switchEthereumChain",
-                            params:[{chainId: `0x${Number(80001).toString(16)}`}]
-                        })
-                        // await provider.request({})
-                        const ethProvider=new ethers.providers.Web3Provider(provider);
-                        const signer=await ethProvider.getSigner(embeddedWallet.address);
-                        const walletBalance=await ethProvider.getBalance(
-                            user.wallet?.address || ""
-                        )
-                        const ethStringAmount=ethers.utils.formatEther(walletBalance);
-                        // setWalletBalance(ethStringAmount);
+                await provider.request({method: "wallet_switchEthereumChain",
+                params:[{chainId: `0x${Number(80001).toString(16)}`}]
+            })
+            // await provider.request({})
+            const ethProvider=new ethers.providers.Web3Provider(provider);
+            const signer=await ethProvider.getSigner(embeddedWallet.address);
+            const walletBalance=await ethProvider.getBalance(
+                user.wallet?.address || ""
+            )
+            const ethStringAmount=ethers.utils.formatEther(walletBalance);
+            // setWalletBalance(ethStringAmount);
 
-                        const loadingLink=toast.loading("Creating Link...");
-                        await peanut.createLink({
-                            structSigner: {
-                              signer: signer,
-                            },
-                            linkDetails: {
-                              chainId: 80001,
-                              tokenAmount: 0.001,
-                              tokenType: 0,
-                            //   tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-                            },
-                          }).then(response => {
-                              console.log("response:",response);
-                              console.log("link:",response.createdLink.link[0]);
-                              setLink(response.createdLink.link[0]);
-                              const code=response.status.code;
-                              if(code){
-                                toast.error("Unsuccessfull",{
-                                    id:loadingLink,
-                                })
-                              }else{
-                                  toast.success("Link Created",{
-                                    id:loadingLink,
-                                  })
-                              }
-    
-                          }).catch(error => {
-                            toast.error("Link Creation Unsuccessfull",{
-                                id:loadingLink,
-                            })
-                            console.log(error)});
+            const loadingLink=toast.loading("Creating Link...");
+            await peanut.createLink({
+                structSigner: {
+                    signer: signer,
+                },
+                linkDetails: {
+                    chainId: 80001,
+                    tokenAmount: 0.001,
+                    tokenType: 0,
+                //   tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                },
+                }).then(response => {
+                    console.log("response:",response);
+                    console.log("link:",response.createdLink.link[0]);
+                    setLink(response.createdLink.link[0]);
+                    const code=response.status.code;
+                    if(code){
+                    toast.error("Unsuccessfull",{
+                        id:loadingLink,
+                    })
+                    }else{
+                        toast.success("Link Created",{
+                        id:loadingLink,
+                        })
+                    }
+
+                }).catch(error => {
+                toast.error("Link Creation Unsuccessfull",{
+                    id:loadingLink,
+                })
+                console.log(error)});
         }
     }
 
