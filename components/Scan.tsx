@@ -1,8 +1,6 @@
 "use client";
-import { usePrivySmartAccount } from '@zerodev/privy';
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { QrReader } from 'react-qr-reader'
-import peanut from '@squirrel-labs/peanut-sdk';
 import dynamic from "next/dynamic"
 import LoadingComponent from "./LoadingComponent";
 
@@ -21,40 +19,12 @@ type LinkWallet = {
 
 const Scan = () => {
     const [receiverAddress,setReceiverAddress]=useState("");
-    const {user}=usePrivySmartAccount();
-    const [linkCreated,setLinkCreated]=useState("");
-
-    useEffect(() => {
-        // const createLink=async () => {
-        //     try{
-        //         const testWallet:LinkWallet={
-        //             wallet:user?.wallet,
-        //             getAddress: () => {
-        //                 return user?.wallet?.address
-        //             }
-        //         }
-        //         const createLinkResponse = await peanut.createLink({
-        //             structSigner:{
-        //               signer: testWallet
-        //             },
-        //             linkDetails:{
-        //               chainId: 80001, // eth-goerli 
-        //               tokenAmount: 0.01,
-        //               tokenType: 1,  // 0 for ether, 1 for erc20, 2 for erc721, 3 for erc1155
-        //             }
-        //         });
-        //         setLinkCreated(createLinkResponse.createdLink.link[0]);
-        //     }catch(err){
-        //         console.log(err);
-        //     }
-        // }
-        // createLink();
-    },[receiverAddress]);
-
+    
   return (
-    <div>
+    <div className=''>
         {receiverAddress===""? (
-        <div className='h-screen md:h-[40vh] w-full md:w-1/2 bg-white'>
+        <div className='h-[60vh] md:h-[40vh] w-screen flex-center '>
+            <div className='h-full w-full md:w-1/2 bg-white flex-center'>
             <QrReader 
                 onResult={(result, error) => {
                     if (!!result) {
@@ -74,6 +44,7 @@ const Scan = () => {
                 }
                 className="h-full w-full"
             />
+        </div>
         </div>
         ):(
             <SendTransactionComponent receiverAdress={receiverAddress} />

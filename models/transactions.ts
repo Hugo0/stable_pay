@@ -47,6 +47,10 @@ const transactionSchema = new mongoose.Schema(
             type:String, //quoteCurrency -> via link we're updating quote currency 
             default:"INR",
         },
+        note:{
+            type:String,
+            default:'',
+        },
         link:{
             type:String,
             default:'',

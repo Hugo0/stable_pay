@@ -8,7 +8,7 @@ import Link from "next/link";
 
 type TransactionProps = {
     senderAddress:string,
-    receiveAddress:string,
+    receiverAddress:string,
     exchangeRate:Number,
     hashId:string,
     sender_currency:string,
@@ -34,7 +34,8 @@ const fetcher = async () => {
 const HistoryComponent = () => {
 
     const [transactions,setTransactions]=useState<TransactionProps[] | null>(null);
-    
+    const smartContractAddress=parseCookies().smartContractAddress?.replace(/"/g, '');
+
     useEffect(() => {
         const getData=async () => {
             const data=await fetcher();
@@ -50,15 +51,19 @@ const HistoryComponent = () => {
     
   return (
     <div className="h-screen w-screen flex-center">
-        <div className="h-5/6 w-full md:w-1/2 bg-black-400 py-2 flex-center flex-col overflow-auto shadow shadow-white-400 rounded no-scrollbar">
-            {transactions.length>0 && transactions.map((transaction:TransactionProps) => {
+        <div className="h-5/6 w-full md:w-1/2 bg-black-400 py-3 flex-center flex-col overflow-auto shadow shadow-white-400 rounded no-scrollbar">
+            {transactions.map((transaction:TransactionProps) => {
                 const amount=Number(transaction.sentAmount)/Number(transaction.exchangeRate);
                 const showAmount=Number(amount.toFixed(3));
                 return (
                     <div key={transaction.hashId} className="h-8 w-full bg-black-300 text-white-400 m-1 py-10 flex items-center justify-around rounded">
-                        <p className="heading4 text-gradient_blue-purple">Amount: {showAmount} {transaction.sender_currency}</p>
+                        {transaction.receiverAddress==smartContractAddress?
+                            <p className="heading4 text-gradient_blue-purple">Received {showAmount} {transaction.sender_currency}</p>
+                            : 
+                            <p className="heading4 text-gradient_pink-orange">Sent {showAmount} {transaction.sender_currency}</p>
+                        }
                         {/* <Link href={`/transactions/${transaction.hashId}`}>View More</Link> */}
-                        <Link href={`https://app.jiffyscan.xyz/bundle/${transaction.hashId}?network=mumbai`} target="_blank" className="text-gradient_pink-orange">View on Chain</Link>
+                        <Link href={`https://app.jiffyscan.xyz/bundle/${transaction.hashId}?network=mumbai`} target="_blank" className="text-gradient_purple-blue text-xl">View on Chain</Link>
                     </div>
                 )
             })}

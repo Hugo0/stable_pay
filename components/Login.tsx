@@ -1,16 +1,25 @@
 "use client";
 import { usePrivySmartAccount } from '@zerodev/privy';
 import { useEffect, useState } from 'react'
-import Features from './Features';
 import toast from "react-hot-toast";
-import Install from './Install';
-import Body from './Body';
-import { getUserData } from '@/getUserData';
-import { connectToDatabase } from '@/database';
 import { useWallets } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import peanut from '@squirrel-labs/peanut-sdk';
-import { setCookie } from 'nookies';
+import { parseCookies, setCookie } from 'nookies';
+import dynamic from "next/dynamic";
+import LoadingComponent from './LoadingComponent';
+
+const Body=dynamic(() => import("./Body"),{
+    loading:() => <LoadingComponent />
+})
+
+const Install=dynamic(() => import("./Install"),{
+    loading:() => <LoadingComponent />
+})
+
+const Features=dynamic(() => import("./Features"),{
+    loading:() => <LoadingComponent />
+})
 
 type Props = {
     feature:string | string[] | undefined,
@@ -40,45 +49,46 @@ const Login = ({feature}: Props) => {
                 const embeddedWallet=wallets.find((wallet) => wallet.walletClientType === "privy");
                 if(embeddedWallet){
                     console.log("Eoa:",embeddedWallet.address);
-                    if(user?.wallet){
+                    const smartContractAddress=parseCookies().smartContractAddress;
+                    if(!smartContractAddress && user?.wallet){
                         setCookie(null,'smartContractAddress',JSON.stringify(user?.wallet?.address),{
                             maxAge: 30 * 24 * 60 , // 1 day in seconds
                             path: '/', // Cookie available to all paths
                         })
                     }
-                    const provider = await embeddedWallet.getEthereumProvider();
-                        await provider.request({method: "wallet_switchEthereumChain",
-                        params:[{chainId: `0x${Number(80001).toString(16)}`}]
-                    })
+                    // const provider = await embeddedWallet.getEthereumProvider();
+                    //     await provider.request({method: "wallet_switchEthereumChain",
+                    //     params:[{chainId: `0x${Number(80001).toString(16)}`}]
+                    // })
                     // await provider.request({})
-                    const ethProvider=new ethers.providers.Web3Provider(provider);
-                    const signer=await ethProvider.getSigner(user.wallet?.address);
-                    const walletBalance=await ethProvider.getBalance(
-                        user.wallet?.address || ""
-                    )
-                    const ethStringAmount=ethers.utils.formatEther(walletBalance);
-                    // setWalletBalance(ethStringAmount);
-                    await peanut.createLink({
-                        structSigner: {
-                          signer: signer,
-                        },
-                        linkDetails: {
-                          chainId: Number(80001),
-                          tokenAmount: Number(0.01),
-                          tokenType: 1,
-                          tokenAddress: user?.wallet?.address,
-                        },
-                      }).then(response => {
-                          console.log("response:",response);
-                          console.log("link:",response.createdLink.link[0]);
+                    // const ethProvider=new ethers.providers.Web3Provider(provider);
+                    // const signer=await ethProvider.getSigner(embeddedWallet.address);
+                    // const walletBalance=await ethProvider.getBalance(
+                    //     user.wallet?.address || ""
+                    // )
+                    // const ethStringAmount=ethers.utils.formatEther(walletBalance);
+                    // // setWalletBalance(ethStringAmount);
+                    // await peanut.createLink({
+                    //     structSigner: {
+                    //       signer: signer,
+                    //     },
+                    //     linkDetails: {
+                    //       chainId: 80001,
+                    //       tokenAmount: 0.00001,
+                    //       tokenType: 0,
+                    //     //   tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                    //     },
+                    //   }).then(response => {
+                    //       console.log("response:",response);
+                    //       console.log("link:",response.createdLink.link[0]);
 
-                      }).catch(error => console.log(error));
+                    //   }).catch(error => console.log(error));
 
                     //   const linkDetails = {
                     //     chainId: Number(80001),
-                    //     tokenAmount: Number(0.01),
-                    //     tokenType: user.wallet?.chainId,
-                    //     tokenAddress: user.wallet?.address,
+                    //     tokenAmount: Number(0.00),
+                    //     tokenType: 1,
+                    //     tokenAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
                     //   };
 
                     //   const prepareTxsResponse = await peanut.prepareTxs({
@@ -119,9 +129,6 @@ const Login = ({feature}: Props) => {
         {authenticated && <Features />}
         <section className=''>
             <Body feature={feature} />
-            <div>
-                {/* {signer} */}
-            </div>
         </section>
     </div>) : <Install />}
     </>

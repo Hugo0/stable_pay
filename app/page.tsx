@@ -1,9 +1,7 @@
 
 import LoadingComponent from '@/components/LoadingComponent';
 import { connectToDatabase } from '@/database';
-// import Login from '@/components/Login'
 import dynamic from 'next/dynamic';
-import { Suspense } from 'react';
 
 const Login =dynamic(() => 
   import ('@/components/Login')

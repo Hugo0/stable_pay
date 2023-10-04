@@ -1,4 +1,3 @@
-import { parseCookies } from "nookies";
 import dynamic from "next/dynamic"
 import LoadingComponent from "./LoadingComponent";
 
