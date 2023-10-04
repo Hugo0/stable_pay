@@ -167,7 +167,7 @@ const SendTransactionComponent = (props:Props) => {
                 hashId:hashId,
                 sender_currency:baseCurrency,
                 receiver_currency:receiverCurrency,
-                sentAmount:Number(receiverAmount),
+                sentAmount:Number(value),
                 exchangeRate:Number(exRate),
                 note:noteAdded,
             }
@@ -222,9 +222,16 @@ const SendTransactionComponent = (props:Props) => {
                               console.log("response:",response);
                               console.log("link:",response.createdLink.link[0]);
                               setLink(response.createdLink.link[0]);
-                              toast.success("Link Created",{
-                                id:loadingLink,
-                              })
+                              const code=response.status.code;
+                              if(code){
+                                toast.error("Unsuccessfull",{
+                                    id:loadingLink,
+                                })
+                              }else{
+                                  toast.success("Link Created",{
+                                    id:loadingLink,
+                                  })
+                              }
     
                           }).catch(error => {
                             toast.error("Link Creation Unsuccessfull",{

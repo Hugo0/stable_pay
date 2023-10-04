@@ -53,7 +53,7 @@ const HistoryComponent = () => {
     <div className="h-screen w-screen flex-center">
         <div className="h-5/6 w-full md:w-1/2 bg-black-400 py-3 flex-center flex-col overflow-auto shadow shadow-white-400 rounded no-scrollbar">
             {transactions.map((transaction:TransactionProps) => {
-                const amount=Number(transaction.sentAmount)/Number(transaction.exchangeRate);
+                const amount=Number(transaction.sentAmount);
                 const showAmount=Number(amount.toFixed(3));
                 return (
                     <div key={transaction.hashId} className="h-8 w-full bg-black-300 text-white-400 m-1 py-10 flex items-center justify-around rounded">
