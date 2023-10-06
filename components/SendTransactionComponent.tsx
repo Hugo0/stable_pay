@@ -265,7 +265,7 @@ const SendTransactionComponent = (props:Props) => {
                 const ethStringAmount=ethers.utils.formatEther(walletBalance);
                 // setWalletBalance(ethStringAmount);
                 
-                await peanut.createLink({
+                const createLinkResponse = await peanut.createLink({
                     structSigner: {
                         signer: signer,
                     },
@@ -273,28 +273,13 @@ const SendTransactionComponent = (props:Props) => {
                         chainId: 80001,
                         tokenAmount: amount,
                         tokenType: 0,
-                    //   tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                        //   tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
                     },
-                    }).then(response => {
-                        console.log("response:",response);
-                        console.log("link:",response.createdLink.link[0]);
-                        setLink(response.createdLink.link[0]);
-                        const code=response.status.code;
-                        if(code){
-                        toast.error("Unsuccessfull",{
-                            id:loadingLink,
-                        })
-                        }else{
-                            toast.success("Link Created",{
-                            id:loadingLink,
-                            })
-                        }
-    
-                    }).catch(error => {
-                    toast.error("Link Creation Unsuccessfull",{
-                        id:loadingLink,
-                    })
-                    console.log(error)});
+                });
+
+                console.log("response:", createLinkResponse);
+                console.log("link:", createLinkResponse.createdLink.link[0]);
+                setLink(createLinkResponse.createdLink.link[0]);
 
                     const bodyObj={
                         senderAddress:user.wallet?.address,
@@ -318,6 +303,18 @@ const SendTransactionComponent = (props:Props) => {
                     const data=await response.json();
                     console.log("data added to db:",data);
 
+                    if (data.error) {
+                        // Handle the case where there is an error in the response, e.g., validation error
+                        toast.error(data.error, {
+                            id: loadingLink,
+                        });
+                    } else {
+                        // Handle success
+                        toast.success("Link Created", {
+                            id: loadingLink,
+                        });
+                    }
+
                     // const paymentId=await getTransactionIdByHashId(hashId);
                     const uriLink=`localhost:3000/payments/${hashId}`;
 
@@ -330,6 +327,9 @@ const SendTransactionComponent = (props:Props) => {
 
             }catch(err){
                 console.log(err);
+                toast.error("Link Creation Unsuccessful", {
+                    id: loadingLink,
+                });
             }
 
         }
@@ -353,7 +353,7 @@ const SendTransactionComponent = (props:Props) => {
                 </div>
                 <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
                     <p className="text-gradient_blue-purple text-xl font-bold">Exchange Rate:</p>
-                    {loading ? <LoadingComponent />:<p className="text-gradient_purple-blue text-xl font-bold">{exRate}</p>}
+                    {loading ? <LoadingComponent />:<p className="text-gradient_purple-blue text-xl font-bold">1 {baseCurrency} = {exRate} {receiverCurrency}</p>}
                 </div>
                 <div className="flex-center flex-col md:flex-row gap-x-3 gap-y-3">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">They receive:</p>
