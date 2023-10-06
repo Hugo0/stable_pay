@@ -84,9 +84,10 @@ const WalletComponent = (props:Props) => {
     },[props.baseCurrency]);
   
     return (
-      <div className="flex-center text-gradient_blue-purple heading3">
-        Wallet balance: {walletBalance} {props.baseCurrency}
-      </div>
+        <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3 heading3">
+            <p className="text-gradient_blue-purple text-xl font-bold">Wallet balance:</p>
+            <p className="text-gradient_purple-blue text-xl font-bold">{walletBalance}</p>
+        </div>
     );
 };
 
