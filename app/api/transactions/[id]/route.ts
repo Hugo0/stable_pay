@@ -11,29 +11,27 @@ export async function GET(req: NextRequest,
       await connectToDatabase();
   
     //   const smartContractAddress = parseCookies().smartContractAddress;
-      const smartContractAddress=params.id;
+      const transactionId=params.id;
+      const selectedFields = [
+        'senderAddress',
+        'receiverAddress',
+        'sentAmount',
+        'sender_currency',
+        'hashId',
+        'link',
+        'note',
+      ];
 
-        console.log(`smartContract ${smartContractAddress}`);
-      // Find transactions where senderAddress or receiverAddress matches smartContractAddress
-      // Find transactions where senderAddress or receiverAddress matches smartContractAddress
-    const transactions = await Transaction.find(
-        {
-          $or: [{ senderAddress: smartContractAddress }, { receiverAddress: smartContractAddress}],
-        },
-        // Select only the desired fields
-        {
-          senderAddress: 1,
-          receiverAddress: 1,
-          exchangeRate: 1,
-          sender_currency: 1,
-          receiver_currency: 1,
-          sentAmount: 1,
-          hashId:1,
-          _id: 0, // Exclude the _id field
-        }
-      ).sort({createdAt:-1});
+      // Add a special case to exclude the _id field
+        selectedFields.push('-_id');
+
+        console.log(`txnId`,transactionId);
+
+      const transaction = await Transaction.findOne({hashId:transactionId})
+      .select(selectedFields.join(' ')) // Join the field names with spaces
+
   
-      return NextResponse.json(transactions, { status: 200 });
+      return NextResponse.json(transaction, { status: 200 });
     } catch (err) {
       return NextResponse.json({ message: "Server error" }, { status: 500 });
     }

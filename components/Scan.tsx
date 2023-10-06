@@ -8,21 +8,43 @@ const SendTransactionComponent = dynamic(() => import("./SendTransactionComponen
     loading: () => <LoadingComponent />
 })
 
+const QrCode = dynamic(() => import('./QRCode'),{
+    loading: () => <LoadingComponent />
+})
+
 type Wallet = {
     address : string | undefined,
 }
 
-type LinkWallet = {
-    wallet?: Wallet,
-    getAddress?: () => string | undefined,
-}
-
 const Scan = () => {
     const [receiverAddress,setReceiverAddress]=useState("");
+    const [qrActive,setQRActive]=useState("scan");
+
+    const features=[
+        {
+            title:"Scan",
+            option:"scan",
+        },
+        {
+            title:"My QR Code",
+            option:"qr",
+        }
+    ];
     
   return (
     <div className=''>
-        {receiverAddress===""? (
+        <div className="flex-center gap-2">
+            {features.map(feature => {
+                return (
+                    <div onClick={() => setQRActive(feature.option)} className={`${qrActive===feature.option?'gradient_blue-purple':''} hover:cursor-pointer text-white-800 whitespace-nowrap rounded-lg px-8 py-2.5 mb-2 capitalize bg-black-300`}>
+                        {feature.title}
+                    </div>
+                )
+            })}
+        </div>
+        {qrActive=="scan"?(
+            <div>
+                {receiverAddress===""? (
         <div className='h-[60vh] md:h-[40vh] w-screen flex-center '>
             <div className='h-full w-full md:w-1/2 bg-white flex-center'>
             <QrReader 
@@ -49,6 +71,11 @@ const Scan = () => {
         ):(
             <SendTransactionComponent receiverAdress={receiverAddress} />
         )}
+            </div>
+        ):(
+            <QrCode />
+        )
+    }
     </div>
   )
 }

@@ -14,7 +14,9 @@ import getConversionAmount, { offRampFunction } from "./utils/getConversion";
 import { parseCookies } from "nookies";
 import { useWallets } from "@privy-io/react-auth";
 import peanut from "@squirrel-labs/peanut-sdk";
-import { revalidateTag } from "next/cache";
+import { useGeneralStore } from "@/store/GeneralStore";
+import { getTransactionIdByHashId } from "./utils/getTransactionByHashId";
+import { useRouter } from "next/navigation";
 
 
 const WalletComponent=dynamic(() => 
@@ -42,6 +44,8 @@ const SendTransactionComponent = (props:Props) => {
     const [validatorOpen,setValidatorOpen]=useState(false);
     const [noteAdded,setNoteAdded]=useState("");
     const [link,setLink]=useState('');
+    const [loadingState,setLoadingState]=useGeneralStore(state => [state.loadingState,state.setLoadingState]);
+    const router=useRouter();
 
     useEffect(() => {
         const fetcher= async () => {
@@ -109,6 +113,7 @@ const SendTransactionComponent = (props:Props) => {
     // This function ensures that the input only contains numbers
     const handleInputChange =async  (e:ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
+        if(Number(inputValue)<0)return ;
         // Use a regular expression to allow only numbers (0-9)
         // const sanitizedValue = inputValue.replace(/[^0-9]/g, '');
         setValue(inputValue);
@@ -148,14 +153,25 @@ const SendTransactionComponent = (props:Props) => {
         const smartContractAddress = parseCookies().smartContractAddress?.replace(/"/g, '');
         const uri = `https://api-testnet.polygonscan.com/api?module=account&action=balance&address=${smartContractAddress}&apikey=${process.env.NEXT_PUBLIC_POLYGON_API}`;
         
-        const data=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
-
-
+        
+        
         const sendingFundsId=toast.loading("Sending Funds...");
+        let walletBalance:Number=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
+        walletBalance=Number(walletBalance)/10**18;
+        const rate=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
+        const amount=Number(value)/rate?.amount;
+        
+        if(amount > walletBalance){
+            toast.error("Insufficient funds...",{
+                id:sendingFundsId,
+            })    
+            return ;
+        }
+
         try{
             setLoading(true);
-            const rate=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
-            const amount=Number(value)/rate?.amount;
+            setLoadingState(true);
+
             const ethAmount=amount.toString();
             const weiValue =ethers.utils.parseEther(ethAmount);
             const hexValue= ethers.utils.hexlify(weiValue);
@@ -190,12 +206,17 @@ const SendTransactionComponent = (props:Props) => {
             })
             const data=await response.json();
             console.log("data added to db:",data);
+
+            router.push(`/payments/${hashId}`);
+
         }catch(err){
             toast.error("Transaction Failed",{
                 id:sendingFundsId,
             })
             console.log(err);
         }
+
+        // setLoadingState(false);
 
         // revalidateTag('transactionHistory');
 
@@ -204,50 +225,113 @@ const SendTransactionComponent = (props:Props) => {
     const embeddedWallet=useWallets().wallets.find((wallet) => wallet.walletClientType === "privy");
     const handleLinkTransfer = async () => {
         if(embeddedWallet){
-            const provider = await embeddedWallet.getEthereumProvider();
-                await provider.request({method: "wallet_switchEthereumChain",
-                params:[{chainId: `0x${Number(80001).toString(16)}`}]
-            })
-            // await provider.request({})
-            const ethProvider=new ethers.providers.Web3Provider(provider);
-            const signer=await ethProvider.getSigner(embeddedWallet.address);
-            const walletBalance=await ethProvider.getBalance(
-                user.wallet?.address || ""
-            )
-            const ethStringAmount=ethers.utils.formatEther(walletBalance);
-            // setWalletBalance(ethStringAmount);
 
+
+            const smartContractAddress = parseCookies().smartContractAddress?.replace(/"/g, '');
+            const uri = `https://api-testnet.polygonscan.com/api?module=account&action=balance&address=${smartContractAddress}&apikey=${process.env.NEXT_PUBLIC_POLYGON_API}`;
+            
             const loadingLink=toast.loading("Creating Link...");
-            await peanut.createLink({
-                structSigner: {
-                    signer: signer,
-                },
-                linkDetails: {
-                    chainId: 80001,
-                    tokenAmount: 0.001,
-                    tokenType: 0,
-                //   tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-                },
-                }).then(response => {
-                    console.log("response:",response);
-                    console.log("link:",response.createdLink.link[0]);
-                    setLink(response.createdLink.link[0]);
-                    const code=response.status.code;
-                    if(code){
-                    toast.error("Unsuccessfull",{
+            try{
+                let testWalletBalance:Number=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
+                testWalletBalance=Number(testWalletBalance)/10**18;
+                const rate=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
+                const amount=Number(value)/rate?.amount;
+                
+                if(amount > testWalletBalance){
+                    toast.error("Insufficient funds...");    
+                    return ;
+                }
+
+                const ethAmount=amount.toString();
+                const weiValue =ethers.utils.parseEther(ethAmount);
+                const hexValue= ethers.utils.hexlify(weiValue);
+                const unsignedTx={
+                    to: embeddedWallet.address,
+                    chainId:80001,
+                    value:hexValue,
+                }
+                const hashId=await sendTransaction(unsignedTx); //user.wallet.address
+
+                const provider = await embeddedWallet.getEthereumProvider();
+                    await provider.request({method: "wallet_switchEthereumChain",
+                    params:[{chainId: `0x${Number(80001).toString(16)}`}]
+                })
+                // await provider.request({})
+                const ethProvider=new ethers.providers.Web3Provider(provider);
+                const signer=await ethProvider.getSigner(embeddedWallet.address);
+                const walletBalance=await ethProvider.getBalance(
+                    user.wallet?.address || ""
+                )
+                const ethStringAmount=ethers.utils.formatEther(walletBalance);
+                // setWalletBalance(ethStringAmount);
+                
+                await peanut.createLink({
+                    structSigner: {
+                        signer: signer,
+                    },
+                    linkDetails: {
+                        chainId: 80001,
+                        tokenAmount: amount,
+                        tokenType: 0,
+                    //   tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                    },
+                    }).then(response => {
+                        console.log("response:",response);
+                        console.log("link:",response.createdLink.link[0]);
+                        setLink(response.createdLink.link[0]);
+                        const code=response.status.code;
+                        if(code){
+                        toast.error("Unsuccessfull",{
+                            id:loadingLink,
+                        })
+                        }else{
+                            toast.success("Link Created",{
+                            id:loadingLink,
+                            })
+                        }
+    
+                    }).catch(error => {
+                    toast.error("Link Creation Unsuccessfull",{
                         id:loadingLink,
                     })
-                    }else{
-                        toast.success("Link Created",{
-                        id:loadingLink,
-                        })
-                    }
+                    console.log(error)});
 
-                }).catch(error => {
-                toast.error("Link Creation Unsuccessfull",{
-                    id:loadingLink,
-                })
-                console.log(error)});
+                    const bodyObj={
+                        senderAddress:user.wallet?.address,
+                        receiverAddress:"",
+                        category:"SendviaLink",
+                        status:"Completed",
+                        hashId:hashId,
+                        sender_currency:baseCurrency,
+                        receiver_currency:receiverCurrency,
+                        sentAmount:Number(value),
+                        exchangeRate:Number(exRate),
+                        note:noteAdded,
+                        usdc_transferred:amount,
+                        link:link,
+                    }
+                    
+                    const response=await fetch('/api/transactions',{
+                        method:"POST",
+                        body:JSON.stringify(bodyObj),
+                    })
+                    const data=await response.json();
+                    console.log("data added to db:",data);
+
+                    // const paymentId=await getTransactionIdByHashId(hashId);
+                    const uriLink=`localhost:3000/payments/${hashId}`;
+
+                    setLink(uriLink);
+                    setLoading(false);
+                    
+
+                    router.push(`/payments/${hashId}`);
+                    
+
+            }catch(err){
+                console.log(err);
+            }
+
         }
     }
 
@@ -310,7 +394,7 @@ const SendTransactionComponent = (props:Props) => {
                 <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleLinkTransfer}>Send via Link</button>
             </div>
 
-            {link!=="" && (
+            {(link!=="" && !loading) && (
                 <div className="flex-center p-4 gap-x-3 gap-y-3 flex-col md:flex-row">
                 <p className="text-gradient_pink-orange text-3xl font-bold">{link}</p>
             </div>
