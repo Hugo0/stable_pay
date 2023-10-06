@@ -48,7 +48,7 @@ const TransactionDetailsComponent = (props: Props) => {
                         To : {`${transactionDetail.receiverAddress.substring(0,3)}...${transactionDetail.receiverAddress.substring(transactionDetail.senderAddress.length-3)}`}
                     </div>
                     <div className="text-gradient_blue-purple heading3">
-                        Amount : {transactionDetail.sentAmount} {transactionDetail.sender_currency}
+                        Amount : {(transactionDetail.sentAmount).toString()} {transactionDetail.sender_currency}
                     </div>
                     <div className="text-gradient_blue-purple heading3">
                         Note : {transactionDetail?.note}
