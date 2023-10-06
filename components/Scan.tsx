@@ -36,7 +36,7 @@ const Scan = () => {
         <div className="flex-center gap-2">
             {features.map(feature => {
                 return (
-                    <div onClick={() => setQRActive(feature.option)} className={`${qrActive===feature.option?'gradient_blue-purple':''} hover:cursor-pointer text-white-800 whitespace-nowrap rounded-lg px-8 py-2.5 mb-2 capitalize bg-black-300`}>
+                    <div key={feature.option} onClick={() => setQRActive(feature.option)} className={`${qrActive===feature.option?'gradient_blue-purple':''} hover:cursor-pointer text-white-800 whitespace-nowrap rounded-lg px-8 py-2.5 mb-2 capitalize bg-black-300`}>
                         {feature.title}
                     </div>
                 )
