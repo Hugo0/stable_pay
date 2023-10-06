@@ -55,6 +55,9 @@ const TransactionDetailsComponent = (props: Props) => {
                     </div>
                     {linkExist && (
                         <div className="flex flex-col justify-center items-center">
+                            <div className="text-gradient_blue-purple heading3">
+                                Category : Outgoing via Link
+                            </div>
                             <div className="gradient_blue-purple text-white-800 rounded whitespace-nowrap p-6 heading2">
                                 Claim Link
                             </div>
