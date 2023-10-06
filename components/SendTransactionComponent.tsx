@@ -156,7 +156,7 @@ const SendTransactionComponent = (props:Props) => {
         
         
         const sendingFundsId=toast.loading("Sending Funds...");
-        let walletBalance:Number=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
+        let walletBalance:number=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
         walletBalance=Number(walletBalance)/10**18;
         const rate=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
         const amount=Number(value)/rate?.amount;
