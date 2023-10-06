@@ -74,3 +74,5 @@ const getConversionAmount = async (
   };
 
 export default getConversionAmount;
+
+export {offRampFunction};

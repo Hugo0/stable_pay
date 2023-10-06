@@ -12,7 +12,7 @@ export async function GET(req: NextRequest,
   
     //   const smartContractAddress = parseCookies().smartContractAddress;
       const smartContractAddress=params.id;
-      
+
         console.log(`smartContract ${smartContractAddress}`);
       // Find transactions where senderAddress or receiverAddress matches smartContractAddress
       // Find transactions where senderAddress or receiverAddress matches smartContractAddress
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest,
           hashId:1,
           _id: 0, // Exclude the _id field
         }
-      );
+      ).sort({createdAt:-1});
   
       return NextResponse.json(transactions, { status: 200 });
     } catch (err) {

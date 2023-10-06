@@ -14,6 +14,10 @@ const transactionSchema = new mongoose.Schema(
             type:Number,
             required:true,
         },
+        usdc_transferred:{
+            type:Number,
+            required:true,
+        },
         exchangeRate: {
             type: Number,
             default:1.0,

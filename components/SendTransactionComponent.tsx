@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ArrowDownIcon, ArrowLeftCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useEffect, useState } from "react";
 import {fiatCurrencies} from "@/lib/fiatCurrencies"
 import toast from "react-hot-toast";
@@ -10,10 +10,11 @@ import {ValidChecker} from "@/components/utils/ethereum_validator";
 
 import dynamic from "next/dynamic";
 import LoadingComponent from "./LoadingComponent";
-import getConversionAmount from "./utils/getConversion";
+import getConversionAmount, { offRampFunction } from "./utils/getConversion";
 import { parseCookies } from "nookies";
 import { useWallets } from "@privy-io/react-auth";
 import peanut from "@squirrel-labs/peanut-sdk";
+import { revalidateTag } from "next/cache";
 
 
 const WalletComponent=dynamic(() => 
@@ -29,7 +30,7 @@ type Props={
 
 const SendTransactionComponent = (props:Props) => {
     const [value, setValue] = useState<string>('');
-    const [receiverAmount,setReceiverAmount]=useState(0.0);
+    const [receiverAmount,setReceiverAmount]=useState("0.00");
     const [receiverAddress,setReceiverAddress]=useState<string>(props.receiverAdress || "");
     const [receiverCurrency,setReceiverCurrency]=useState<string>("INR");
     const [baseCurrency,setBaseCurrency]=useState<string>("USD");
@@ -46,7 +47,7 @@ const SendTransactionComponent = (props:Props) => {
         const fetcher= async () => {
             setLoading(true);
             const rate=await getConversionAmount(baseCurrency,receiverCurrency,1);
-            setExRate(Number(rate.toFixed(3)));
+            setExRate(Number(rate.toFixed(2)));
             setLoading(false);
         }
         fetcher();
@@ -111,20 +112,27 @@ const SendTransactionComponent = (props:Props) => {
         // Use a regular expression to allow only numbers (0-9)
         // const sanitizedValue = inputValue.replace(/[^0-9]/g, '');
         setValue(inputValue);
-        const recevingAmount=exRate*Number(inputValue);
-        setReceiverAmount(Number(recevingAmount.toFixed(3)));
+        // const recevingAmount=exRate*Number(inputValue);
+        // const amount_without_commas=Number(recevingAmount.toFixed(2));
+        // const formattedAmount=amount_without_commas.toLocaleString();
+        // console.log(`receevingamount: ${recevingAmount} without commas ${amount_without_commas} formatted: ${formattedAmount}`)
+        // setReceiverAmount(formattedAmount);
     };
 
     const handleValidator=() => {
         // if(receiverAddress==="")return ;
         if(!user?.wallet)return ;
-        if(receiverAmount>0)
+        if(Number(receiverAmount)>0)
             setValidatorOpen(true);
     }
 
     useEffect(() => {
-        setReceiverAmount(exRate*Number(value));
-    },[exRate]);
+        const recevingAmount=exRate*Number(value);
+        const amount_without_commas=Number(recevingAmount.toFixed(2));
+        const formattedAmount=amount_without_commas.toLocaleString();
+        console.log(`receevingamount: ${recevingAmount} without commas ${amount_without_commas} formatted: ${formattedAmount}`)
+        setReceiverAmount(formattedAmount);
+    },[exRate,value]);
 
     const handleDropDown=(input:string) => {
         setCase(input);
@@ -140,17 +148,14 @@ const SendTransactionComponent = (props:Props) => {
         const smartContractAddress = parseCookies().smartContractAddress?.replace(/"/g, '');
         const uri = `https://api-testnet.polygonscan.com/api?module=account&action=balance&address=${smartContractAddress}&apikey=${process.env.NEXT_PUBLIC_POLYGON_API}`;
         
-        const data=await fetch(uri).then(response => response.json());
+        const data=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
 
-        if(receiverAmount>data){
-            return ;
-        }
 
         const sendingFundsId=toast.loading("Sending Funds...");
         try{
             setLoading(true);
-            const rate=await getConversionAmount("usd",baseCurrency,1);
-            const amount=Number(value)/rate;
+            const rate=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
+            const amount=Number(value)/rate?.amount;
             const ethAmount=amount.toString();
             const weiValue =ethers.utils.parseEther(ethAmount);
             const hexValue= ethers.utils.hexlify(weiValue);
@@ -172,6 +177,7 @@ const SendTransactionComponent = (props:Props) => {
                 sentAmount:Number(value),
                 exchangeRate:Number(exRate),
                 note:noteAdded,
+                usdc_transferred:amount,
             }
             setLoading(false);
             toast.success("Successfully Sent!!",{
@@ -190,6 +196,8 @@ const SendTransactionComponent = (props:Props) => {
             })
             console.log(err);
         }
+
+        // revalidateTag('transactionHistory');
 
     }   
 
@@ -247,14 +255,14 @@ const SendTransactionComponent = (props:Props) => {
     <div className="h-screen w-screen relative flex-center z-50 backdrop-blur-lg">
         {dropDownOpen? (<SetCurrency />):(
             <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around`}>
-                <WalletComponent />
+                <WalletComponent baseCurrency={baseCurrency} />
                 {/* <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
                     <input required={true} onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter the receiver's contract address" />
                 </div> */}
                 <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
                     <p className="text-gradient_blue-purple text-3xl font-bold">You Send:</p>
-                    <input onChange={handleInputChange} type="number" step="0.01" value={value} className="outline-none flex items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter Amount" />
+                    <input onChange={handleInputChange} type="number" step="0.01" value={value} className="outline-none no-scrollar flex items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter Amount" />
                     <p className="text-gradient_purple-blue text-3xl font-bold flex-center gap-x-1">{baseCurrency}
                         <ArrowDownIcon className="h-7 w-7 text-white hover:cursor-pointer" onClick={() => handleDropDown("b")} />
                     </p>
@@ -276,6 +284,9 @@ const SendTransactionComponent = (props:Props) => {
         )}
         {validatorOpen && (
             <div className="h-5/6 w-full py-12 md:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around my-12">
+            {/* <div className="top-0 left-0 absolute m-3">
+                <ArrowLeftCircleIcon className="gradient_blue-purple" />
+            </div> */}
             <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                 <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
                 <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter the receiver's contract address" />

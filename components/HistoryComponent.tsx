@@ -1,6 +1,6 @@
 "use client";
 
-import useSWR from "swr";
+// import useSWR from "swr";
 import { parseCookies } from "nookies";
 import { useEffect, useState } from "react";
 import LoadingComponent from "./LoadingComponent";
@@ -16,15 +16,17 @@ type TransactionProps = {
     sentAmount:Number,
 }
 
+// export const revalidate=50;
+
 const fetcher = async () => {
     const smartContractAddress=parseCookies().smartContractAddress?.replace(/"/g, '');
     const response=await fetch(`/api/transactions/${smartContractAddress}`,{
-        next:{
-            tags:['transactionHistory'],
+        // next:{
+        //     tags:['transactionHistory'],
             
-        },
+        // },
         // method:"GET",
-        // cache:"no-cache",
+        cache:"no-cache",
     });
     const data=await response.json();
     console.log(`data: ${data}`);
@@ -63,7 +65,7 @@ const HistoryComponent = () => {
                             <p className="heading4 text-gradient_pink-orange">Sent {showAmount} {transaction.sender_currency}</p>
                         }
                         {/* <Link href={`/transactions/${transaction.hashId}`}>View More</Link> */}
-                        <Link href={`https://app.jiffyscan.xyz/bundle/${transaction.hashId}?network=mumbai`} target="_blank" className="text-gradient_purple-blue text-xl">View on Chain</Link>
+                        <Link href={`https://mumbai.polygonscan.com/tx/${transaction.hashId}`} target="_blank" className="text-gradient_purple-blue text-xl">View on Chain</Link>
                     </div>
                 )
             })}
