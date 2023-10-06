@@ -232,7 +232,7 @@ const SendTransactionComponent = (props:Props) => {
             
             const loadingLink=toast.loading("Creating Link...");
             try{
-                let testWalletBalance:Number=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
+                let testWalletBalance:number=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
                 testWalletBalance=Number(testWalletBalance)/10**18;
                 const rate=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
                 const amount=Number(value)/rate?.amount;
