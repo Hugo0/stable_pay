@@ -34,7 +34,7 @@ const Features = () => {
         href={`?feature=${link.toLocaleLowerCase()}`}
         onClick={() => handleFilter(link)}
         className={`${
-            (active === link || searchParams.get('feature')===link.toLocaleLowerCase() ) ?"gradient_blue-purple" : "bg-black-300"
+            (searchParams.get('feature')===link.toLocaleLowerCase() ) ?"gradient_blue-purple" : "bg-black-300"
             } ${(!searchParams.has('feature')) && link==='Payments'?'gradient_blue-purple':''} whitespace-nowrap rounded-lg px-8 py-2.5 capitalize`}
             scroll={false}
             >

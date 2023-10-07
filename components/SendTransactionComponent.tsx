@@ -15,7 +15,6 @@ import { parseCookies } from "nookies";
 import { useWallets } from "@privy-io/react-auth";
 import peanut from "@squirrel-labs/peanut-sdk";
 import { useGeneralStore } from "@/store/GeneralStore";
-import { getTransactionIdByHashId } from "./utils/getTransactionByHashId";
 import { useRouter } from "next/navigation";
 
 
@@ -39,7 +38,7 @@ const SendTransactionComponent = (props:Props) => {
     const [dropDownOpen,setDropDownOpen]=useState<boolean>(true);
     const [currecySelected,setCase]=useState<string>("");
     const [loading,setLoading]=useState(false);
-    const {sendTransaction,user}=usePrivySmartAccount();
+    const {sendTransaction,user,getEthereumProvider,zeroDevReady}=usePrivySmartAccount();
     const [exRate,setExRate]=useState(0.0);
     const [validatorOpen,setValidatorOpen]=useState(false);
     const [noteAdded,setNoteAdded]=useState("");
@@ -158,7 +157,7 @@ const SendTransactionComponent = (props:Props) => {
         const sendingFundsId=toast.loading("Sending Funds...");
         let walletBalance:number=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
         walletBalance=Number(walletBalance)/10**18;
-        const rate=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
+        const rate:any=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
         const amount=Number(value)/rate?.amount;
         
         if(amount > walletBalance){
@@ -224,7 +223,7 @@ const SendTransactionComponent = (props:Props) => {
 
     const embeddedWallet=useWallets().wallets.find((wallet) => wallet.walletClientType === "privy");
     const handleLinkTransfer = async () => {
-        if(embeddedWallet){
+        if(zeroDevReady){
 
 
             const smartContractAddress = parseCookies().smartContractAddress?.replace(/"/g, '');
@@ -242,32 +241,39 @@ const SendTransactionComponent = (props:Props) => {
                     return ;
                 }
 
-                const ethAmount=amount.toString();
-                const weiValue =ethers.utils.parseEther(ethAmount);
-                const hexValue= ethers.utils.hexlify(weiValue);
-                const unsignedTx={
-                    to: embeddedWallet.address,
-                    chainId:80001,
-                    value:hexValue,
-                }
-                const hashId=await sendTransaction(unsignedTx); //user.wallet.address
+                // const ethAmount=amount.toString();
+                // const weiValue =ethers.utils.parseEther(ethAmount);
+                // const hexValue= ethers.utils.hexlify(weiValue);
+                // const unsignedTx={
+                //     to: embeddedWallet?.address,
+                //     chainId:80001,
+                //     value:hexValue,
+                // }
+                // const hashId=await sendTransaction(unsignedTx); //user.wallet.address
 
-                const provider = await embeddedWallet.getEthereumProvider();
-                    await provider.request({method: "wallet_switchEthereumChain",
-                    params:[{chainId: `0x${Number(80001).toString(16)}`}]
-                })
-                // await provider.request({})
-                const ethProvider=new ethers.providers.Web3Provider(provider);
-                const signer=await ethProvider.getSigner(embeddedWallet.address);
-                const walletBalance=await ethProvider.getBalance(
-                    user.wallet?.address || ""
-                )
-                const ethStringAmount=ethers.utils.formatEther(walletBalance);
+                // const provider = await embeddedWallet.getEthereumProvider();
+                //     await provider.request({method: "wallet_switchEthereumChain",
+                //     params:[{chainId: `0x${Number(80001).toString(16)}`}]
+                // })
+                // const ethProvider=new ethers.providers.Web3Provider(provider);
+                // const signer=await ethProvider.getSigner(embeddedWallet.address);
+                // const walletBalance=await ethProvider.getBalance(
+                //     user.wallet?.address || ""
+                // )
+                // const ethStringAmount=ethers.utils.formatEther(walletBalance);
                 // setWalletBalance(ethStringAmount);
+
+                const scwProvider=await getEthereumProvider();
+                // await scwProvider.request({method:""})
+                const scwEthProvider=new ethers.providers.Web3Provider(scwProvider);
+                const scwSigner=await scwEthProvider.getSigner(user?.wallet?.address);
+                const chainId=user?.wallet?.chainId;
+
+                console.log(`chainId: ${chainId}`);
                 
                 const createLinkResponse = await peanut.createLink({
                     structSigner: {
-                        signer: signer,
+                        signer: scwSigner,
                     },
                     linkDetails: {
                         chainId: 80001,
@@ -280,6 +286,7 @@ const SendTransactionComponent = (props:Props) => {
                 console.log("response:", createLinkResponse);
                 console.log("link:", createLinkResponse.createdLink.link[0]);
                 setLink(createLinkResponse.createdLink.link[0]);
+                let hashId=createLinkResponse.createdLink.txHash;
 
                     const bodyObj={
                         senderAddress:user.wallet?.address,
@@ -293,7 +300,7 @@ const SendTransactionComponent = (props:Props) => {
                         exchangeRate:Number(exRate),
                         note:noteAdded,
                         usdc_transferred:amount,
-                        link:link,
+                        link:createLinkResponse.createdLink.link[0],
                     }
                     
                     const response=await fetch('/api/transactions',{
@@ -315,7 +322,6 @@ const SendTransactionComponent = (props:Props) => {
                         });
                     }
 
-                    // const paymentId=await getTransactionIdByHashId(hashId);
                     const uriLink=`localhost:3000/payments/${hashId}`;
 
                     setLink(uriLink);
