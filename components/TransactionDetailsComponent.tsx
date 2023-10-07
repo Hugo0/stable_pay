@@ -25,7 +25,7 @@ const TransactionDetailsComponent = (props: Props) => {
         const link=transactionDetail?.link?.replace(/peanut/g,'staging.peanut');
         console.log('linkclaim' + link);
         const response = await peanut.claimLinkGasless({
-            link: link,
+            link: link || "",
             recipientAddress: smartContractAddress,
             APIKey: process.env.NEXT_PUBLIC_PEANUT_KEY || "",
       })
