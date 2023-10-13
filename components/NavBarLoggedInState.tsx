@@ -26,13 +26,13 @@ const NavBarLoggedInState = () => {
             Add Funds
           </Link>
         </li>
-        <li className="body-text !font-bold text-gradient_pink-orange">
+        {/* <li className="body-text !font-bold text-gradient_pink-orange">
           <Link
             href="/account"
           >
             Account
           </Link>
-        </li>
+        </li> */}
       </ul>):<></>}
     </div>
   )

@@ -102,7 +102,7 @@ const HistoryComponent = () => {
             {Object.entries(groupTransactionsByMonth(transactions)).map(([month,transactions]:Props) => {
                 return (
                     <div className="bg-black-300" key={month}>
-                        <p className="heading1 text-white-800 flex-center w-full py-6">{month}</p>
+                        <p className="heading1 text-white-800 flex-center w-full py-6 text-center">{month}</p>
                         {transactions.map((transaction:TransactionProps) => {
                             const amount=Number(transaction.sentAmount);
                             const showAmount=Number(amount.toFixed(3));
@@ -115,16 +115,14 @@ const HistoryComponent = () => {
                             // To get the local date and time as a string
                             const localDateString = localDate.toLocaleString('default', { month: 'long', day: 'numeric' });
                             return (
-                                <div key={transaction.hashId} className=" py-7 w-full bg-black-400 gap-y-4 text-white-400 mt-2 flex items-center justify-around rounded flex-col lg:flex-row">
-                                    {transaction.senderAddress==smartContractAddress?
-                                        <p className="heading4 text-gradient_pink-orange">Sent {showAmount} {transaction.sender_currency} on {localDateString}</p>
-                                        : 
-                                        <p className="heading4 text-gradient_blue-purple">Received {showAmount} {transaction.sender_currency} on {localDateString}</p>
-                                    }
-                                    <div className="flex-center flex-col gap-y-6">
-                                        <Link href={`/payments/${transaction.hashId}`} className="text-gradient_purple-blue text-xl">View Transaction</Link>
-                                        <Link href={`https://mumbai.polygonscan.com/tx/${transaction.hashId}`} target="_blank" className="text-gradient_purple-blue text-xl">View on Chain</Link>
-                                    </div>
+                                <div key={transaction.hashId} className=" py-7 w-full bg-black-400 gap-y-4 text-white-400 mt-2 flex items-center justify-around rounded">
+                                    <Link href={`/payments/${transaction.hashId}`} className="hover:cursor-pointer flex-center w-full">
+                                        <p className={`heading4 w-3/4 text-center flex-center ${transaction.senderAddress==smartContractAddress?'text-gradient_pink-orange':'text-gradient_blue-purple'}`}>{transaction.senderAddress==smartContractAddress?'Sent on':'Received on'} {localDateString}</p>
+                                        <p className="text-center w-1/4 heading4">{showAmount} {transaction.sender_currency}</p>
+                                    </Link>
+                                    {/* <div className="flex-center flex-col"> */}
+                                        {/* <Link href={`https://mumbai.polygonscan.com/tx/${transaction.hashId}`} target="_blank" className="text-gradient_purple-blue text-xl">View on Chain</Link> */}
+                                    {/* </div> */}
                                 </div>
                             )
                         })}

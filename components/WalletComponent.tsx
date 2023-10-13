@@ -59,7 +59,7 @@ const WalletComponent = (props:Props) => {
 
     const smartContractAddress = parseCookies().smartContractAddress?.replace(/"/g, '');
     const uri = `https://api-testnet.polygonscan.com/api?module=account&action=balance&address=${smartContractAddress}&apikey=${process.env.NEXT_PUBLIC_POLYGON_API}`;
-    const [walletBalance,setWalletBalance]=useState('0.000');
+    const [walletBalance,setWalletBalance]=useState<string | null>(null);
 
     // Use SWR for data fetching with automatic revalidation
     // const { data, error } = useSWR(uri, fetcher, {
@@ -67,15 +67,28 @@ const WalletComponent = (props:Props) => {
     //     // revalidateOnFocus: true, // Revalidate when the window gets focus
     //     ssr:true,
     // });
+    useEffect(() => {
+      const getWalletbalance= async () => {
+        const data=await fetcher(uri); // wallet balance in matic/usdc
+        if(data){
+          const conversionFromGeitoNormalCurrency=Number(data)/10**18;
+          let value=(conversionFromGeitoNormalCurrency).toFixed(2);
+          if(isNaN(Number(value)))value="0.00";
+          setWalletBalance(value);
+        }
+      }
+      getWalletbalance();
+    },[]);
 
     useEffect(() => {
         const getWallet=async () => {
-            const data=await fetcher(uri); // wallet balance in matic/usdc
-            if(data){
+            // const data=await fetcher(uri); // wallet balance in matic/usdc
+            if(walletBalance){
                 const rate=await offRampFunction(props.baseCurrency);// 1usdc in baseCurrency
                 const NumberRate=Number(rate?.amount);
-                const conversionFromGeitoNormalCurrency=Number(data)/10**18;
-                let value=(NumberRate*conversionFromGeitoNormalCurrency).toFixed(2);
+                const conversionFromGeitoNormalCurrency=Number(walletBalance)/10**18;
+                // let value=(NumberRate*conversionFromGeitoNormalCurrency).toFixed(2);
+                let value=(NumberRate*Number(walletBalance)).toFixed(2);
                 if(isNaN(Number(value)))value="0.00";
                 setWalletBalance(value);
             }
@@ -84,9 +97,9 @@ const WalletComponent = (props:Props) => {
     },[props.baseCurrency]);
   
     return (
-        <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
-            <p className="text-gradient_blue-purple text-xl font-bold heading3">Total balance:</p>
-            <p className="text-gradient_purple-blue text-xl font-bold heading3">{walletBalance} {props.baseCurrency}</p>
+        <div className="flex-center flex-col gap-x-2 gap-y-2">
+            <p className="text-gradient_pink-orange heading1">{walletBalance} <span className='heading3'>{props.baseCurrency}</span></p>
+            <p className="text-white-400 heading4">Total balance</p>
         </div>
     );
 };

@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import PrivyProviderB from '../lib/providers/PrivyProvidersB'
 import ZeroDevProviderComponent from '../lib/providers/ZeroDevProviderComponent'
 import NavBar from '@/components/NavBar';
-import Footer from '@/components/Footer';
 import {Toaster} from "react-hot-toast";
 import SideBar from '@/components/SideBar';
 
@@ -51,10 +50,8 @@ export default function RootLayout({
           <NavBar />
           <SideBar />
           <body className='min-h-screen bg-black-100'>
-            {/* <ToastContainer /> */}
             {children}
           </body>
-          <Footer />
         </PrivyProviderB>
       </ZeroDevProviderComponent>
     </html>

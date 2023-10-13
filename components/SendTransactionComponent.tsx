@@ -139,8 +139,8 @@ const SendTransactionComponent = (props:Props) => {
         setReceiverAmount(formattedAmount);
     },[exRate,value]);
 
-    const handleDropDown=(input:string) => {
-        setCase(input);
+    const handleDropDown=() => {
+        // setCase(input);
         setDropDownOpen(true);
     }
     
@@ -228,6 +228,7 @@ const SendTransactionComponent = (props:Props) => {
 
 
             const smartContractAddress = parseCookies().smartContractAddress?.replace(/"/g, '');
+            if(!smartContractAddress)return ;
             const uri = `https://api-testnet.polygonscan.com/api?module=account&action=balance&address=${smartContractAddress}&apikey=${process.env.NEXT_PUBLIC_POLYGON_API}`;
             
             const loadingLink=toast.loading("Creating Link...");
@@ -267,7 +268,7 @@ const SendTransactionComponent = (props:Props) => {
 
                 console.log("response:", createLinkResponse);
                 console.log("link:", createLinkResponse.createdLink.link[0]);
-                setLink(createLinkResponse.createdLink.link[0]);
+                // setLink(createLinkResponse.createdLink.link[0]);
                 let hashId=createLinkResponse.createdLink.txHash;
 
                 if(!hashId) return;
@@ -325,39 +326,37 @@ const SendTransactionComponent = (props:Props) => {
         }
     }
 
-    const handleSwap=async () => {
-        const temp=baseCurrency;
-        setBaseCurrency(receiverCurrency);
-        setReceiverCurrency(temp);
-    }
-
   return (
     <div className="h-screen w-screen relative flex-center backdrop-blur-lg">
         {dropDownOpen? (<SetCurrency />):(
-            <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around`}>
+            <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around gap-y-3`}>
                 <WalletComponent baseCurrency={baseCurrency} />
                 {/* <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
                     <input required={true} onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter the receiver's contract address" />
                 </div> */}
-                <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
-                    <p className="text-gradient_blue-purple text-3xl font-bold">You Send:</p>
-                    <input onChange={handleInputChange} type="number" step="0.01" value={value} className="outline-none no-scrollar flex items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter Amount" />
-                    <p className="text-gradient_purple-blue text-3xl font-bold flex-center gap-x-1">{baseCurrency}
-                        <ArrowDownIcon className="h-7 w-7 text-white hover:cursor-pointer" onClick={() => handleDropDown("b")} />
-                    </p>
+                <div className="flex-center gap-x-4">
+                    <div className="flex-center flex-col gap-y-1 w-1/2">
+                        <p className="text-white-400 heading4">You Send:</p>
+                        <p className="text-gradient_blue-purple heading2 flex-center">{baseCurrency}</p>
+                    </div>
+                    <input onChange={handleInputChange} type="number" step="0.01" value={value} className="outline-none no-scrollar w-1/2 flex-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter Amount" />
                 </div>
                 <div className="flex-center">
-                    <ArrowsUpDownIcon className="h-7 w-7 text-white-500 hover:cursor-pointer" onClick={handleSwap} />
+                    <ArrowsUpDownIcon className="h-7 w-7 text-white-500 hover:cursor-pointer flex-center" />
+                    <div className="w-1/2"></div>
                 </div>
-                <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
-                    <p className="text-gradient_blue-purple text-xl font-bold">Exchange Rate:</p>
-                    {loading ? <LoadingComponent />:<p className="text-gradient_purple-blue text-xl font-bold">1 {baseCurrency} = {exRate} {receiverCurrency}</p>}
+                <div className="flex-center heading4">
+                    <p className="text-white-400 w-1/2">Receiver Gets:</p>
+                    {loading ? <LoadingComponent />:<p className="text-white-500">1 {baseCurrency} = {exRate} {receiverCurrency}</p>}
                 </div>
-                <div className="flex-center flex-col md:flex-row gap-x-3 gap-y-3">
-                    <p className=" text-gradient_blue-purple text-3xl font-bold">Receiver Gets:</p>
-                    <p className=" text-gradient_purple-blue text-3xl font-bold flex-center">{receiverAmount} {receiverCurrency}
-                    <ArrowDownIcon className="h-7 w-7 text-white pl-2 hover:cursor-pointer" onClick={() => handleDropDown("r")} />
+                <div className="flex">
+                    <div className="w-1/2 flex-center">
+                        {/* <p className=" text-gradient_blue-purple heading4">Receiver Gets:</p> */}
+                        <p className=" text-gradient_blue-purple heading2 flex-center">{receiverCurrency}</p>
+                        <ArrowDownIcon className="h-7 w-7 text-white pl-2 hover:cursor-pointer" onClick={handleDropDown} />
+                    </div>
+                    <p className=" text-gradient_purple-blue heading2 flex-center w-1/2">{receiverAmount}
                     </p>
                 </div>
                 <div className="text-3xl flex-center flex-col md:flex-row hover:cursor-pointer">
@@ -370,6 +369,7 @@ const SendTransactionComponent = (props:Props) => {
             <div className="top-0 left-0 h-10 w-10 absolute m-3">
                 <ArrowLeftCircleIcon className=" hover:cursor-pointer rounded-full text-white-800" onClick={() => setValidatorOpen(false)} />
             </div>
+            <p className="flex-center text-white-500 heading3">Send To:</p>
             <p className="flex-center text-white-400 heading4">You are sending USDC worth {value} {baseCurrency}</p>
             <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                 <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
