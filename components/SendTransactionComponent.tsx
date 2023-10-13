@@ -46,6 +46,23 @@ const SendTransactionComponent = (props:Props) => {
     const [link,setLink]=useState('');
     const [loadingState,setLoadingState]=useGeneralStore(state => [state.loadingState,state.setLoadingState]);
     const router=useRouter();
+    const [walletBalance,setWalletBalance]=useState("0.00");
+    const [invalidInput,setInvalidInput]=useState(0.00);
+
+    useEffect(() => {
+        const getTestbalance=async () => {
+            if(!user.wallet)return ;
+        
+            const smartContractAddress = parseCookies().smartContractAddress?.replace(/"/g, '');
+            if(!smartContractAddress)return ;
+            const uri = `https://api-testnet.polygonscan.com/api?module=account&action=balance&address=${smartContractAddress}&apikey=${process.env.NEXT_PUBLIC_POLYGON_API}`;
+            
+            let walletBalance:number=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
+            walletBalance=Number(walletBalance)/10**18;
+            setWalletBalance(walletBalance.toFixed(2));
+        }
+        getTestbalance();
+    },[]);
 
     useEffect(() => {
         const fetcher= async () => {
@@ -71,11 +88,7 @@ const SendTransactionComponent = (props:Props) => {
         };
     
         const handleCurrencySelection=async (currency_code:string) => {
-            if(currecySelected==="b"){
-                setBaseCurrency(currency_code);
-            }else{
-                setReceiverCurrency(currency_code);
-            }
+            setReceiverCurrency(currency_code);
             setDropDownOpen(false);
         }   
     
@@ -102,6 +115,14 @@ const SendTransactionComponent = (props:Props) => {
         )
     
     }
+
+    useEffect(() => {
+        const maxAllowedInput=async () => {
+            const rate:any=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
+            setInvalidInput(Number(walletBalance)*rate?.amount);
+        }
+        maxAllowedInput();
+    },[baseCurrency,walletBalance]);
 
     const handleReceiverAdress=async (e:ChangeEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
@@ -222,7 +243,16 @@ const SendTransactionComponent = (props:Props) => {
 
     }   
 
-    const embeddedWallet=useWallets().wallets.find((wallet) => wallet.walletClientType === "privy");
+    const handleInvalidInput= async () => {
+        const rate:any=await offRampFunction(baseCurrency); //1 usdc in baseCurrency
+        const amount=Number(value)/rate?.amount;
+        
+        if(amount > Number(walletBalance)){  
+            return true;
+        }
+        return false;
+    }
+
     const handleLinkTransfer = async () => {
         if(zeroDevReady){
 
@@ -329,35 +359,39 @@ const SendTransactionComponent = (props:Props) => {
   return (
     <div className="h-screen w-screen relative flex-center backdrop-blur-lg">
         {dropDownOpen? (<SetCurrency />):(
-            <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around gap-y-3`}>
+            <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around gap-y-2`}>
                 <WalletComponent baseCurrency={baseCurrency} />
                 {/* <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
                     <input required={true} onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter the receiver's contract address" />
                 </div> */}
-                <div className="flex-center gap-x-4">
-                    <div className="flex-center flex-col gap-y-1 w-1/2">
+                <div className="flex-center gap-x-4 w-full">
+                    <div className="flex flex-col justify-center gap-y-1 w-1/2 pl-12">
                         <p className="text-white-400 heading4">You Send:</p>
-                        <p className="text-gradient_blue-purple heading2 flex-center">{baseCurrency}</p>
+                        <p className="text-gradient_blue-purple heading2">{baseCurrency}</p>
                     </div>
-                    <input onChange={handleInputChange} type="number" step="0.01" value={value} className="outline-none no-scrollar w-1/2 flex-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter Amount" />
+                    <input onChange={handleInputChange} type="number" step="0.01" value={value} className={`outline-none ${Number(value)>invalidInput?'border-[#DC143C]':'border-[#2ecc71]'} border-[6px] no-scrollar w-1/2 flex-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl max-w-full`} placeholder="Enter Amount" />
                 </div>
-                <div className="flex-center">
-                    <ArrowsUpDownIcon className="h-7 w-7 text-white-500 hover:cursor-pointer flex-center" />
+                <div className="flex flex-col justify-center gap-y-1 w-1/2 pl-[72px]">
+                    <ArrowsUpDownIcon className="h-7 w-7 text-white-500 hover:cursor-pointer" />
                     <div className="w-1/2"></div>
                 </div>
-                <div className="flex-center heading4">
-                    <p className="text-white-400 w-1/2">Receiver Gets:</p>
-                    {loading ? <LoadingComponent />:<p className="text-white-500">1 {baseCurrency} = {exRate} {receiverCurrency}</p>}
-                </div>
-                <div className="flex">
-                    <div className="w-1/2 flex-center">
-                        {/* <p className=" text-gradient_blue-purple heading4">Receiver Gets:</p> */}
-                        <p className=" text-gradient_blue-purple heading2 flex-center">{receiverCurrency}</p>
-                        <ArrowDownIcon className="h-7 w-7 text-white pl-2 hover:cursor-pointer" onClick={handleDropDown} />
+                {/* <div className="flex heading4 w-full">
+                    <p className="text-white-400 w-1/2 pl-12">Receiver Gets:</p>
+                    {loading ? <LoadingComponent />:<p className="text-white-500 text-center">1 {baseCurrency} = {exRate} {receiverCurrency}</p>}
+                </div> */}
+                <div className="flex-center w-full">
+                    <div className="w-1/2 flex flex-col gap-y-1">
+                        <p className=" text-white-400 heading4 pl-12">Receiver Gets:</p>
+                        <div className="flex w-full items-center">
+                            <p className=" text-gradient_blue-purple heading2 pl-12">{receiverCurrency}</p>
+                            <ArrowDownIcon className="h-7 w-7 text-white pl-2 hover:cursor-pointer" onClick={handleDropDown} />
+                        </div>
                     </div>
-                    <p className=" text-gradient_purple-blue heading2 flex-center w-1/2">{receiverAmount}
-                    </p>
+                    <div className="w-1/2 flex flex-col gap-y-1">
+                        {loading ? <LoadingComponent />:<p className="text-white-500 heading4">1 {baseCurrency} = {exRate} {receiverCurrency}</p>}
+                        <p className=" text-gradient_purple-blue heading2 flex items-center w-full overflow-auto">{receiverAmount}</p>
+                    </div>
                 </div>
                 <div className="text-3xl flex-center flex-col md:flex-row hover:cursor-pointer">
                     <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleValidator}>{loading?'Please Wait...':'Send Funds'}</button>
