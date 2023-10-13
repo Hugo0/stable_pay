@@ -33,6 +33,7 @@ const Login = ({feature}: Props) => {
     const {authenticated,login,user,zeroDevReady}=usePrivySmartAccount();
     const [link,setLink]=useState<string | null>(null);
     const {wallets}=useWallets();
+    const smartContractAddress=parseCookies().smartContractAddress;
     useEffect(() => {
         const userData=setTimeout(async () => {
 
@@ -42,7 +43,7 @@ const Login = ({feature}: Props) => {
             }
 
             const refreshToast=toast.loading('Setting Up, please wait...');
-            if(!authenticated){
+            if(!smartContractAddress){
                 await login();
             }
             if(zeroDevReady){

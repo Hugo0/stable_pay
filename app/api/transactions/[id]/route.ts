@@ -20,6 +20,8 @@ export async function GET(req: NextRequest,
         'hashId',
         'link',
         'note',
+        'usdc_transferred',
+        'createdAt',
       ];
 
       // Add a special case to exclude the _id field

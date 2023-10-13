@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownIcon, ArrowLeftCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ArrowDownIcon, ArrowLeftCircleIcon, ArrowsUpDownIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useEffect, useState } from "react";
 import {fiatCurrencies} from "@/lib/fiatCurrencies"
 import toast from "react-hot-toast";
@@ -16,6 +16,7 @@ import { useWallets } from "@privy-io/react-auth";
 import peanut from "@squirrel-labs/peanut-sdk";
 import { useGeneralStore } from "@/store/GeneralStore";
 import { useRouter } from "next/navigation";
+import SendlinkModal from "./SendlinkModal";
 
 
 const WalletComponent=dynamic(() => 
@@ -35,7 +36,7 @@ const SendTransactionComponent = (props:Props) => {
     const [receiverAddress,setReceiverAddress]=useState<string>(props.receiverAdress || "");
     const [receiverCurrency,setReceiverCurrency]=useState<string>("INR");
     const [baseCurrency,setBaseCurrency]=useState<string>("USD");
-    const [dropDownOpen,setDropDownOpen]=useState<boolean>(true);
+    const [dropDownOpen,setDropDownOpen]=useState<boolean>(false);
     const [currecySelected,setCase]=useState<string>("");
     const [loading,setLoading]=useState(false);
     const {sendTransaction,user,getEthereumProvider,zeroDevReady}=usePrivySmartAccount();
@@ -54,7 +55,7 @@ const SendTransactionComponent = (props:Props) => {
             setLoading(false);
         }
         fetcher();
-        setDropDownOpen(!dropDownOpen);
+        // setDropDownOpen(!dropDownOpen);
     },[baseCurrency,receiverCurrency]);
 
     const SetCurrency= () => {
@@ -75,13 +76,13 @@ const SendTransactionComponent = (props:Props) => {
             }else{
                 setReceiverCurrency(currency_code);
             }
-            // setDropDownOpen(false);
+            setDropDownOpen(false);
         }   
     
         return (
             <div className="h-5/6 w-full md:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around">
 
-                <div className={`z-10 h-50 overflow-auto w-120 bg-white divide-y divide-gray-100 rounded-lg shadow `}>
+                <div className={`h-50 overflow-auto w-120 bg-white divide-y divide-gray-100 rounded-lg shadow `}>
                         <div className='p-3 overflow-auto flex items-center '>
                             <MagnifyingGlassIcon className='h-6 text-gray-500' />
                             <input className='outline-none' type="text" onChange={handleChange} placeholder="Search your country" value={searchQuery} />
@@ -134,7 +135,7 @@ const SendTransactionComponent = (props:Props) => {
         const recevingAmount=exRate*Number(value);
         const amount_without_commas=Number(recevingAmount.toFixed(2));
         const formattedAmount=amount_without_commas.toLocaleString();
-        console.log(`receevingamount: ${recevingAmount} without commas ${amount_without_commas} formatted: ${formattedAmount}`)
+        // console.log(`receevingamount: ${recevingAmount} without commas ${amount_without_commas} formatted: ${formattedAmount}`)
         setReceiverAmount(formattedAmount);
     },[exRate,value]);
 
@@ -241,35 +242,16 @@ const SendTransactionComponent = (props:Props) => {
                     return ;
                 }
 
-                // const ethAmount=amount.toString();
-                // const weiValue =ethers.utils.parseEther(ethAmount);
-                // const hexValue= ethers.utils.hexlify(weiValue);
-                // const unsignedTx={
-                //     to: embeddedWallet?.address,
-                //     chainId:80001,
-                //     value:hexValue,
-                // }
-                // const hashId=await sendTransaction(unsignedTx); //user.wallet.address
-
-                // const provider = await embeddedWallet.getEthereumProvider();
-                //     await provider.request({method: "wallet_switchEthereumChain",
-                //     params:[{chainId: `0x${Number(80001).toString(16)}`}]
-                // })
-                // const ethProvider=new ethers.providers.Web3Provider(provider);
-                // const signer=await ethProvider.getSigner(embeddedWallet.address);
-                // const walletBalance=await ethProvider.getBalance(
-                //     user.wallet?.address || ""
-                // )
-                // const ethStringAmount=ethers.utils.formatEther(walletBalance);
-                // setWalletBalance(ethStringAmount);
-
                 const scwProvider=await getEthereumProvider();
                 // await scwProvider.request({method:""})
                 const scwEthProvider=new ethers.providers.Web3Provider(scwProvider);
+                // const scwSigner=await scwEthProvider.getSigner(user?.wallet?.address);
                 const scwSigner=await scwEthProvider.getSigner(user?.wallet?.address);
+
                 const chainId=user?.wallet?.chainId;
 
-                console.log(`chainId: ${chainId}`);
+                console.log(`chainId: ${chainId} signer ${scwSigner}`);
+                console.log(scwSigner);
                 
                 const createLinkResponse = await peanut.createLink({
                     structSigner: {
@@ -279,7 +261,7 @@ const SendTransactionComponent = (props:Props) => {
                         chainId: 80001,
                         tokenAmount: amount,
                         tokenType: 0,
-                        //   tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                        // tokenAddress: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
                     },
                 });
 
@@ -287,6 +269,8 @@ const SendTransactionComponent = (props:Props) => {
                 console.log("link:", createLinkResponse.createdLink.link[0]);
                 setLink(createLinkResponse.createdLink.link[0]);
                 let hashId=createLinkResponse.createdLink.txHash;
+
+                if(!hashId) return;
 
                     const bodyObj={
                         senderAddress:user.wallet?.address,
@@ -322,13 +306,13 @@ const SendTransactionComponent = (props:Props) => {
                         });
                     }
 
-                    const uriLink=`localhost:3000/payments/${hashId}`;
+                    const uriLink=`http://stable-pay-mukul202.vercel.app/payments/${hashId}`;
 
                     setLink(uriLink);
                     setLoading(false);
                     
 
-                    router.push(`/payments/${hashId}`);
+                    // router.push(`/payments/${hashId}`);
                     
 
             }catch(err){
@@ -341,10 +325,16 @@ const SendTransactionComponent = (props:Props) => {
         }
     }
 
+    const handleSwap=async () => {
+        const temp=baseCurrency;
+        setBaseCurrency(receiverCurrency);
+        setReceiverCurrency(temp);
+    }
+
   return (
-    <div className="h-screen w-screen relative flex-center z-50 backdrop-blur-lg">
+    <div className="h-screen w-screen relative flex-center backdrop-blur-lg">
         {dropDownOpen? (<SetCurrency />):(
-            <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around`}>
+            <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around`}>
                 <WalletComponent baseCurrency={baseCurrency} />
                 {/* <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
@@ -357,12 +347,15 @@ const SendTransactionComponent = (props:Props) => {
                         <ArrowDownIcon className="h-7 w-7 text-white hover:cursor-pointer" onClick={() => handleDropDown("b")} />
                     </p>
                 </div>
+                <div className="flex-center">
+                    <ArrowsUpDownIcon className="h-7 w-7 text-white-500 hover:cursor-pointer" onClick={handleSwap} />
+                </div>
                 <div className="flex-center flex-col md:flex-row gap-x-2 gap-y-3">
                     <p className="text-gradient_blue-purple text-xl font-bold">Exchange Rate:</p>
                     {loading ? <LoadingComponent />:<p className="text-gradient_purple-blue text-xl font-bold">1 {baseCurrency} = {exRate} {receiverCurrency}</p>}
                 </div>
                 <div className="flex-center flex-col md:flex-row gap-x-3 gap-y-3">
-                    <p className=" text-gradient_blue-purple text-3xl font-bold">They receive:</p>
+                    <p className=" text-gradient_blue-purple text-3xl font-bold">Receiver Gets:</p>
                     <p className=" text-gradient_purple-blue text-3xl font-bold flex-center">{receiverAmount} {receiverCurrency}
                     <ArrowDownIcon className="h-7 w-7 text-white pl-2 hover:cursor-pointer" onClick={() => handleDropDown("r")} />
                     </p>
@@ -373,10 +366,11 @@ const SendTransactionComponent = (props:Props) => {
             </div>
         )}
         {validatorOpen && (
-            <div className="h-5/6 w-full py-12 md:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around my-12">
-            {/* <div className="top-0 left-0 absolute m-3">
-                <ArrowLeftCircleIcon className="gradient_blue-purple" />
-            </div> */}
+            <div className="h-5/6 w-full relative py-12 md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around my-12">
+            <div className="top-0 left-0 h-10 w-10 absolute m-3">
+                <ArrowLeftCircleIcon className=" hover:cursor-pointer rounded-full text-white-800" onClick={() => setValidatorOpen(false)} />
+            </div>
+            <p className="flex-center text-white-400 heading4">You are sending USDC worth {value} {baseCurrency}</p>
             <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                 <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
                 <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter the receiver's contract address" />
@@ -397,13 +391,11 @@ const SendTransactionComponent = (props:Props) => {
             }
             
             <div className="text-3xl flex-center flex-col md:flex-row hover:cursor-pointer">
-                <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleLinkTransfer}>Send via Link</button>
+                <button className='gradient_pink-orange text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleLinkTransfer}>Send via Link</button>
             </div>
 
             {(link!=="" && !loading) && (
-                <div className="flex-center p-4 gap-x-3 gap-y-3 flex-col md:flex-row">
-                <p className="text-gradient_pink-orange text-3xl font-bold">{link}</p>
-            </div>
+                <SendlinkModal link={link} amount={value+''+baseCurrency} />
             )}
         </div>
         )}

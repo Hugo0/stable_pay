@@ -21,16 +21,40 @@ const fetcher = async () => {
     return data;
 }
 
+type GroupedTransactions = Record<string, TransactionProps[]>;
+type Props= [date:string,transactionDetail:TransactionProps[]];
+
 const HistoryComponent = () => {
 
     const [transactions,setTransactions]=useState<TransactionProps[] | null>(null);
     const smartContractAddress=parseCookies().smartContractAddress?.replace(/"/g, '');
+
+    function groupTransactionsByMonth(transactions: TransactionProps[]): GroupedTransactions {
+        const grouped: GroupedTransactions = {};
+      
+        for (const transaction of transactions) {
+          const date = new Date(transaction.createdAt || "");
+          const month = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+          if (!grouped[month]) {
+            grouped[month] = [];
+          }
+          grouped[month].push(transaction);
+        }
+      
+        return grouped;
+      }
+     
 
     useEffect(() => {
         const getData = async () => {
             const data : TransactionProps[] = await fetcher();
             data.map((transaction: TransactionProps) => console.log(transaction));
             setTransactions(data);
+            // const randomData:GroupedTransactions=groupTransactionsByMonth(data);
+            // Object.entries(groupTransactionsByMonth(data)).map(([date,transactionsDetail]:Props) => {
+            //     console.log(date);
+            //     console.log(`date: ${transactionsDetail}`);
+            // })
           };
         
           // Call getData initially when the component mounts
@@ -49,19 +73,61 @@ const HistoryComponent = () => {
     
   return (
     <div className="h-screen w-screen flex-center">
-        <div className="h-5/6 w-full md:w-1/2 bg-black-400 py-3 flex flex-col overflow-auto shadow shadow-white-400 rounded no-scrollbar">
-            {transactions.map((transaction:TransactionProps) => {
+        <div className="h-5/6 w-full md:w-3/4 bg-black-400 py-3 flex flex-col overflow-auto shadow shadow-white-400 rounded no-scrollbar">
+            {/* {transactions.map((transaction:TransactionProps) => {
                 const amount=Number(transaction.sentAmount);
                 const showAmount=Number(amount.toFixed(3));
+                const utcDateString = transaction.createdAt;
+                const utcDate = new Date(utcDateString || "");
+
+                // Convert UTC date to local date
+                const localDate = new Date(utcDate);
+
+                // To get the local date and time as a string
+                const localDateString = localDate.toLocaleString();
                 return (
-                    <div key={transaction.hashId} className="h-8 py-7 w-full bg-black-300 text-white-400 mt-2 flex items-center justify-around rounded">
+                    <div key={transaction.hashId} className=" py-7 w-full bg-black-300 gap-y-4 text-white-400 mt-2 flex items-center justify-around rounded flex-col lg:flex-row">
                         {transaction.senderAddress==smartContractAddress?
-                            <p className="heading4 text-gradient_pink-orange">Sent {showAmount} {transaction.sender_currency}</p>
+                            <p className="heading4 text-gradient_pink-orange">Sent {showAmount} {transaction.sender_currency} on {localDateString}</p>
                             : 
-                            <p className="heading4 text-gradient_blue-purple">Received {showAmount} {transaction.sender_currency}</p>
+                            <p className="heading4 text-gradient_blue-purple">Received {showAmount} {transaction.sender_currency} on {localDateString}</p>
                         }
-                        {/* <Link href={`/transactions/${transaction.hashId}`}>View More</Link> */}
-                        <Link href={`https://mumbai.polygonscan.com/tx/${transaction.hashId}`} target="_blank" className="text-gradient_purple-blue text-xl">View on Chain</Link>
+                        <div className="flex-center flex-col gap-y-6">
+                            <Link href={`/payments/${transaction.hashId}`} className="text-gradient_purple-blue text-xl">View Transaction</Link>
+                            <Link href={`https://mumbai.polygonscan.com/tx/${transaction.hashId}`} target="_blank" className="text-gradient_purple-blue text-xl">View on Chain</Link>
+                        </div>
+                    </div>
+                )
+            })} */}
+            {Object.entries(groupTransactionsByMonth(transactions)).map(([month,transactions]:Props) => {
+                return (
+                    <div className="bg-black-300" key={month}>
+                        <p className="heading1 text-white-800 flex-center w-full py-6">{month}</p>
+                        {transactions.map((transaction:TransactionProps) => {
+                            const amount=Number(transaction.sentAmount);
+                            const showAmount=Number(amount.toFixed(3));
+                            const utcDateString = transaction.createdAt;
+                            const utcDate = new Date(utcDateString || "");
+
+                            // Convert UTC date to local date
+                            const localDate = new Date(utcDate);
+
+                            // To get the local date and time as a string
+                            const localDateString = localDate.toLocaleString('default', { month: 'long', day: 'numeric' });
+                            return (
+                                <div key={transaction.hashId} className=" py-7 w-full bg-black-400 gap-y-4 text-white-400 mt-2 flex items-center justify-around rounded flex-col lg:flex-row">
+                                    {transaction.senderAddress==smartContractAddress?
+                                        <p className="heading4 text-gradient_pink-orange">Sent {showAmount} {transaction.sender_currency} on {localDateString}</p>
+                                        : 
+                                        <p className="heading4 text-gradient_blue-purple">Received {showAmount} {transaction.sender_currency} on {localDateString}</p>
+                                    }
+                                    <div className="flex-center flex-col gap-y-6">
+                                        <Link href={`/payments/${transaction.hashId}`} className="text-gradient_purple-blue text-xl">View Transaction</Link>
+                                        <Link href={`https://mumbai.polygonscan.com/tx/${transaction.hashId}`} target="_blank" className="text-gradient_purple-blue text-xl">View on Chain</Link>
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                 )
             })}

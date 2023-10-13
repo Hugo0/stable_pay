@@ -29,6 +29,7 @@ export async function GET(req: NextRequest,
           receiver_currency: 1,
           sentAmount: 1,
           hashId:1,
+          createdAt:1,
           _id: 0, // Exclude the _id field
         }
       ).sort({createdAt:-1});

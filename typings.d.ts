@@ -9,4 +9,6 @@ type TransactionProps = {
     sentAmount:Number,
     link?:string,
     note?:string,
+    createdAt?:string,
+    usdc_transferred?:Number,
 }

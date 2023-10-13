@@ -1,5 +1,4 @@
 const { default: axios } = require("axios");
-var CryptoJS = require('crypto-js');
 
 const offRampFunction = async (currency:string) => {
     try {
