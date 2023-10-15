@@ -130,10 +130,10 @@ const TransactionDetailsComponent = (props: Props) => {
 
                     )}
                     <div className="flex items-center justify-around gap-x-2">
-                        <div onClick={handleClaim} className="gradient_pink-orange cursor-pointer text-white-800 rounded-lg whitespace-nowrap p-4 heading4">
+                        <div onClick={handleClaim} className="gradient_pink-orange cursor-pointer text-white-800 rounded-lg whitespace-nowrap p-4 sm:heading4 xs:body-text">
                             Claim Link
                         </div>
-                        <div className="gradient_pink-orange cursor-pointer text-white-800 rounded-lg whitespace-nowrap p-4 heading4">
+                        <div className="gradient_pink-orange cursor-pointer text-white-800 rounded-lg whitespace-nowrap p-4 sm:heading4 xs:body-text">
                             <Link href={`https://mumbai.polygonscan.com/tx/${transactionDetail.hashId}`} target="_blank">View on PolygonScan</Link>
                         </div>
                     </div>

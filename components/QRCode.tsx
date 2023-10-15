@@ -35,17 +35,17 @@ const QrCode = () => {
   return (
     <>
       {zeroDevReady? (
-            <div className="h-screen w-screen flex-center flex-col">
-                <div className="flex h-1/2 w-5/6 md:w-1/2 flex-col justify-center items-center self-center rounded-md shadow-lg bg-white py-4 overflow-auto">
+            <div className="h-[60vh] md:h-[40vh] w-screen flex-center flex-col">
+                <div className="flex h-full w-5/6 md:w-1/2 flex-col justify-center items-center self-center rounded-md shadow-lg bg-white py-4 overflow-auto">
                     <QRCode
                         size={256}
-                        style={{ height: "auto", maxWidth: "90%", width: "100%" }}
+                        style={{ width: "100%" }}
                         value={smartContractAddress}
                         viewBox={`0 0 256 256`}
                         className="h-full w-full"
                     />
                 </div>
-                <div onClick={handleCopy} className="hover:cursor-pointer text-gradient_blue-purple bg-black-400 mt-10 heading3 p-4 rounded">Copy to Clipboard</div>
+                <div onClick={handleCopy} className="hover:cursor-pointer text-gradient_blue-purple bg-black-400 mt-2 heading4 md:heading4 p-4 rounded">Copy to Clipboard</div>
             </div>
             ):
         <LoadingComponent />}

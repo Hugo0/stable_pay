@@ -32,12 +32,12 @@ const Scan = () => {
     ];
     
   return (
-    <div className='mt-5'>
+    <div className='mt-5 relative flex h-[70vh] md:h-[50vh]'>
         {qrActive=="scan"?(
             <div>
                 {receiverAddress===""? (
-        <div className='h-[60vh] md:h-[40vh] w-screen flex-center '>
-            <div className='h-full w-full md:w-1/2 bg-white flex-center'>
+        <div className='h-[60vh] md:h-[40vh] w-screen flex-center'>
+            <div className='h-full w-full md:w-1/2 flex-center self-center'>
             <QrReader 
                 onResult={(result, error) => {
                     if (!!result) {
@@ -55,7 +55,7 @@ const Scan = () => {
                         facingMode:'environment'
                     }
                 }
-                className="h-full w-full"
+                className="h-full w-full flex-1"
             />
         </div>
         </div>
@@ -67,7 +67,7 @@ const Scan = () => {
             <QrCode />
         )
     }
-    <div className="flex-center gap-x-4">
+    <div className="flex-center w-full gap-x-4 absolute bottom-0 self-center justify-self-center">
         {features.map(feature => {
             return (
                 <div key={feature.option} onClick={() => setQRActive(feature.option)} className={`${qrActive===feature.option?'gradient_blue-purple':''} hover:cursor-pointer text-white-800 whitespace-nowrap rounded-lg px-8 py-3 my-4 capitalize bg-black-300`}>
