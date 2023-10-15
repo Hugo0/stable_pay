@@ -23,7 +23,7 @@ const Features = () => {
   // }
 
   return (
-    <ul className="text-white-800 md:flex-center body-text no-scrollbar w-full max-w-full gap-2 overflow-auto py-4 sm:max-w-2xl sm:px-3">
+    <ul className="text-white-800 md:flex-center body-text no-scrollbar w-full max-w-full gap-x-4 overflow-auto py-4 sm:max-w-2xl sm:px-3">
     {links.map((link) => (
         <Link
         key={link}

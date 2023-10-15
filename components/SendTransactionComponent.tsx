@@ -359,7 +359,7 @@ const SendTransactionComponent = (props:Props) => {
   return (
     <div className="h-screen w-screen relative flex-center backdrop-blur-lg">
         {dropDownOpen? (<SetCurrency />):(
-            <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around gap-y-2`}>
+            <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around gap-y-1`}>
                 <WalletComponent baseCurrency={baseCurrency} />
                 {/* <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>

@@ -127,7 +127,7 @@ const Login = ({feature}: Props) => {
   return (
     <>
         {!conditionalRender ? (<div className='flex-center paddings mx-auto w-full max-w-screen-2xl flex-col'>
-        {authenticated && <Features />}
+        {/* {authenticated && <Features />} */}
         <section className=''>
             <Body feature={feature} />
         </section>

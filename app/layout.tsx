@@ -5,6 +5,7 @@ import ZeroDevProviderComponent from '../lib/providers/ZeroDevProviderComponent'
 import NavBar from '@/components/NavBar';
 import {Toaster} from "react-hot-toast";
 import SideBar from '@/components/SideBar';
+import Footer from '@/components/Footer';
 
 const APP_NAME = "Stable Pay Global";
 const APP_DESCRIPTION = "Enabling cross border payments";
@@ -52,6 +53,7 @@ export default function RootLayout({
           <body className='min-h-screen bg-black-100'>
             {children}
           </body>
+          <Footer />
         </PrivyProviderB>
       </ZeroDevProviderComponent>
     </html>
