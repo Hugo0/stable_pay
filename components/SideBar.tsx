@@ -31,7 +31,7 @@ const SideBar = () => {
         {/* <div className='fixed h-8 w-8 p-7 m-7 bg-white text-gray-500 hover:cursor-pointer rounded-full'>
             <Bars3Icon  onClick={() => setSideBarOpen(!sideBarOpen)} />
         </div> */}
-        <div className={`h-screen w-screen backdrop-blur-md ${sideBarOpen?'':'hidden'}`}>
+        <div className={`h-screen w-screen z-100 fixed backdrop-blur-md ${sideBarOpen?'':'hidden'}`}>
         <div className={`bg-white h-screen w-full md:w-1/2 lg:w-1/4 border border-r-2 flex flex-col justify-around ${sideBarOpen?'':'hidden'}`}>
             <ArrowLeftCircleIcon className='fixed top-0 left-0 h-12 w-12 m-4 border rounded-full hover:bg-purple hover:cursor-pointer' 
                 onClick={() => setSideBarOpen(false)}

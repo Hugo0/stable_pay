@@ -357,9 +357,9 @@ const SendTransactionComponent = (props:Props) => {
     }
 
   return (
-    <div className="h-screen w-screen relative flex-center backdrop-blur-lg">
+    <div className="flex-center w-screen">
         {dropDownOpen? (<SetCurrency />):(
-            <div className={`${validatorOpen?'hidden':''} h-5/6 w-full md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around gap-y-1`}>
+            <div className={`${validatorOpen?'hidden':''} h-[70vh] w-full md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around gap-y-1`}>
                 <WalletComponent baseCurrency={baseCurrency} />
                 {/* <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
                     <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
@@ -367,10 +367,10 @@ const SendTransactionComponent = (props:Props) => {
                 </div> */}
                 <div className="flex-center gap-x-4 w-full">
                     <div className="flex flex-col justify-center gap-y-1 w-1/2 pl-12">
-                        <p className="text-white-400 heading4">You Send:</p>
-                        <p className="text-gradient_blue-purple heading2">{baseCurrency}</p>
+                        <p className="text-white-400 md:heading4 body-text">You Send:</p>
+                        <p className="text-gradient_blue-purple md:heading2 heading3">{baseCurrency}</p>
                     </div>
-                    <input onChange={handleInputChange} type="number" step="0.01" value={value} className={`outline-none ${Number(value)>invalidInput?'border-[#DC143C]':'border-[#2ecc71]'} border-[6px] no-scrollar w-1/2 flex-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl max-w-full`} placeholder="Enter Amount" />
+                    <input onChange={handleInputChange} type="number" step="0.01" value={value} className={`outline-none ${Number(value)>invalidInput?'border-[#DC143C]':'border-[#2ecc71]'} border-[6px] no-scrollar w-1/2 flex-center text-gray-500 bg-white-800 rounded-md p-4 md:text-2xl body-text max-w-full`} placeholder="Enter Amount" />
                 </div>
                 <div className="flex flex-col justify-center gap-y-1 w-1/2 pl-[72px]">
                     <ArrowsUpDownIcon className="h-7 w-7 text-white-500 hover:cursor-pointer" />
@@ -382,50 +382,53 @@ const SendTransactionComponent = (props:Props) => {
                 </div> */}
                 <div className="flex-center w-full">
                     <div className="w-1/2 flex flex-col gap-y-1">
-                        <p className=" text-white-400 heading4 pl-12">Receiver Gets:</p>
+                        <p className=" text-white-400 md:heading4 body-text pl-12">Receiver Gets:</p>
                         <div className="flex w-full items-center">
-                            <p className=" text-gradient_blue-purple heading2 pl-12">{receiverCurrency}</p>
+                            <p className=" text-gradient_blue-purple md:heading2 heading3 pl-12">{receiverCurrency}</p>
                             <ArrowDownIcon className="h-7 w-7 text-white pl-2 hover:cursor-pointer" onClick={handleDropDown} />
                         </div>
                     </div>
                     <div className="w-1/2 flex flex-col gap-y-1">
-                        {loading ? <LoadingComponent />:<p className="text-white-500 heading4">1 {baseCurrency} = {exRate} {receiverCurrency}</p>}
-                        <p className=" text-gradient_purple-blue heading2 flex items-center w-full overflow-auto">{receiverAmount}</p>
+                        {loading ? <LoadingComponent />:<p className="text-white-500 md:heading4 body-text">1 {baseCurrency} = {exRate} {receiverCurrency}</p>}
+                        <p className=" text-gradient_purple-blue md:heading2 heading3 flex items-center w-full overflow-auto">{receiverAmount}</p>
                     </div>
                 </div>
-                <div className="text-3xl flex-center flex-col md:flex-row hover:cursor-pointer">
+                <div className="heading4 md:text-2xl flex-center flex-col md:flex-row hover:cursor-pointer">
                     <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleValidator}>{loading?'Please Wait...':'Send Funds'}</button>
                 </div>
             </div>
         )}
         {validatorOpen && (
-            <div className="h-5/6 w-full relative py-12 md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around my-12">
+            <div className="h-[70vh] md:h-[60vh] w-full relative md:w-3/4 lg:w-1/2 flex flex-col bg-black-400 rounded-md px-4 justify-around">
             <div className="top-0 left-0 h-10 w-10 absolute m-3">
                 <ArrowLeftCircleIcon className=" hover:cursor-pointer rounded-full text-white-800" onClick={() => setValidatorOpen(false)} />
             </div>
-            <p className="flex-center text-white-500 heading3">Send To:</p>
-            <p className="flex-center text-white-400 heading4">You are sending USDC worth {value} {baseCurrency}</p>
-            <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
-                <p className=" text-gradient_blue-purple text-3xl font-bold">Send to:</p>
-                <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter the receiver's contract address" />
+            <p className="flex-center text-white-500 heading4 md:heading3">Send To:</p>
+            <p className="flex-center text-white-400 md:heading4 body-text">You are sending USDC worth {value} {baseCurrency}</p>
+            <div className="flex-center gap-x-3 gap-y-3">
+                <p className=" text-gradient_blue-purple md:text-2xl heading4 font-bold">Send to:</p>
+                <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 md:text-2xl body-text shadow-md shadow-white max-w-full" placeholder="Enter the receiver's address" />
             </div>
-            <div className="flex-center gap-x-3 gap-y-3 flex-col md:flex-row">
-                <p className=" text-gradient_blue-purple text-3xl font-bold">Add Note:</p>
-                <input onChange={(e) => setNoteAdded(e.target.value)} type="text" value={noteAdded} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Add a note" />
+            <div className="flex-center gap-x-3 gap-y-3">
+                <p className=" text-gradient_blue-purple md:text-2xl heading4 font-bold">Add Note:</p>
+                <input onChange={(e) => setNoteAdded(e.target.value)} type="text" value={noteAdded} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 md:text-2xl body-text shadow-md shadow-white max-w-full" placeholder="Add a note" />
             </div>
 
+            <div className="flex items-center justify-around">
             {(receiverAddress!=="" && !ValidChecker.isValidAddress(receiverAddress)) ? (<div className="flex-center p-4 gap-x-3 gap-y-3 flex-col md:flex-row">
                 <p className="text-gradient_pink-orange text-3xl font-bold">Please Enter Valid Address</p>
             </div>):
             (
-                <div className={`${receiverAddress==""?'hidden':''} text-3xl flex-center flex-col md:flex-row hover:cursor-pointer my-5`}>
+                <div className={`${receiverAddress==""?'hidden':''} md:text-2xl heading4 flex-center flex-col md:flex-row hover:cursor-pointer my-5`}>
                     <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleSubmit}>Send to User</button>
                 </div>
             )
             }
             
-            <div className="text-3xl flex-center flex-col md:flex-row hover:cursor-pointer">
-                <button className='gradient_pink-orange text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleLinkTransfer}>Send via Link</button>
+            <div className="md:text-2xl heading4 flex-center flex-col md:flex-row hover:cursor-pointer">
+                <button className='gradient_pink-orange text-white rounded-2xl p-4 hover:cursor-pointer' disabled={loading} onClick={handleLinkTransfer}>Send via Link</button>
+            </div>
+
             </div>
 
             {(link!=="" && !loading) && (
