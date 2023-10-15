@@ -28,14 +28,13 @@ const SendlinkModal = (props: Props) => {
     }
 
     const handleClose= async () => {
-        const split=props.link.split('/');
-        router.push(`/payments/${split[2]}`);
+        await router.push("/?feature=history");
     }
 
   return (
     <>
-        <div className={`fixed top-0 left-0 flex-center h-screen w-screen backdrop-blur-md z-200 ${!modalOpen?'hidden':''}`}>
-            <div className='h-full w-full md:h-1/2 md:w-1/2 bg-white rounded-lg'>  
+        <div className={`fixed top-0 left-0 flex-center h-screen w-screen backdrop-blur-md z-50 ${!modalOpen?'hidden':''}`}>
+            <div className='h-1/2 w-1/2 bg-white rounded-lg'>  
                 <div className="flex items-center justify-around  m-6 heading2">
                     <div className="flex flex-col gap-y-2">
                         <p>Link Created</p>

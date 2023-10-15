@@ -17,6 +17,7 @@ import peanut from "@squirrel-labs/peanut-sdk";
 import { useGeneralStore } from "@/store/GeneralStore";
 import { useRouter } from "next/navigation";
 import SendlinkModal from "./SendlinkModal";
+import Image from "next/image";
 
 
 const WalletComponent=dynamic(() => 
@@ -51,7 +52,7 @@ const SendTransactionComponent = (props:Props) => {
 
     useEffect(() => {
         const getTestbalance=async () => {
-            if(!user.wallet)return ;
+            // if(!user.wallet)return ;
         
             const smartContractAddress = parseCookies().smartContractAddress?.replace(/"/g, '');
             if(!smartContractAddress)return ;
@@ -60,8 +61,14 @@ const SendTransactionComponent = (props:Props) => {
             let walletBalance:number=await fetch(uri).then(response => response.json()).then(data => data.result); //matic balance
             walletBalance=Number(walletBalance)/10**18;
             setWalletBalance(walletBalance.toFixed(2));
-        }
+        };
         getTestbalance();
+
+        // Set up an interval to call getData every 5 seconds
+        const intervalId = setInterval(getTestbalance, 1000*5);
+
+        // Clear the interval when the component unmounts
+        return () => clearInterval(intervalId);
     },[]);
 
     useEffect(() => {
@@ -366,13 +373,13 @@ const SendTransactionComponent = (props:Props) => {
                     <input required={true} onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 text-2xl shadow-md shadow-white max-w-full" placeholder="Enter the receiver's contract address" />
                 </div> */}
                 <div className="flex-center gap-x-4 w-full">
-                    <div className="flex flex-col justify-center gap-y-1 w-1/2 pl-12">
+                    <div className="flex flex-col justify-center gap-y-1 w-1/2 pl-8">
                         <p className="text-white-400 md:heading4 body-text">You Send:</p>
                         <p className="text-gradient_blue-purple md:heading2 heading3">{baseCurrency}</p>
                     </div>
                     <input onChange={handleInputChange} type="number" step="0.01" value={value} className={`outline-none ${Number(value)>invalidInput?'border-[#DC143C]':'border-[#2ecc71]'} border-[6px] no-scrollar w-1/2 flex-center text-gray-500 bg-white-800 rounded-md p-4 md:text-2xl body-text max-w-full`} placeholder="Enter Amount" />
                 </div>
-                <div className="flex flex-col justify-center gap-y-1 w-1/2 pl-[72px]">
+                <div className="flex flex-col justify-center gap-y-1 w-1/2 pl-[56px]">
                     <ArrowsUpDownIcon className="h-7 w-7 text-white-500 hover:cursor-pointer" />
                     <div className="w-1/2"></div>
                 </div>
@@ -382,9 +389,9 @@ const SendTransactionComponent = (props:Props) => {
                 </div> */}
                 <div className="flex-center w-full">
                     <div className="w-1/2 flex flex-col gap-y-1">
-                        <p className=" text-white-400 md:heading4 body-text pl-12">Receiver Gets:</p>
+                        <p className=" text-white-400 md:heading4 body-text pl-8">Receiver Gets:</p>
                         <div className="flex w-full items-center">
-                            <p className=" text-gradient_blue-purple md:heading2 heading3 pl-12">{receiverCurrency}</p>
+                            <p className=" text-gradient_blue-purple md:heading2 heading3 pl-8">{receiverCurrency}</p>
                             <ArrowDownIcon className="h-7 w-7 text-white pl-2 hover:cursor-pointer" onClick={handleDropDown} />
                         </div>
                     </div>
@@ -393,8 +400,9 @@ const SendTransactionComponent = (props:Props) => {
                         <p className=" text-gradient_purple-blue md:heading2 heading3 flex items-center w-full overflow-auto">{receiverAmount}</p>
                     </div>
                 </div>
-                <div className="heading4 md:text-2xl flex-center flex-col md:flex-row hover:cursor-pointer">
-                    <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleValidator}>{loading?'Please Wait...':'Send Funds'}</button>
+                <div className="heading4 md:text-2xl gap-x-3 flex-center hover:cursor-pointer">
+                    <button className='gradient_purple-blue text-white rounded-2xl p-4 hover:cursor-pointer'>Add funds</button>
+                    <button className='gradient_purple-blue text-white rounded-2xl p-4 hover:cursor-pointer' disabled={loading} onClick={handleValidator}>{loading?'Please Wait...':'Send Funds'}</button>
                 </div>
             </div>
         )}
@@ -405,30 +413,35 @@ const SendTransactionComponent = (props:Props) => {
             </div>
             <p className="flex-center text-white-500 heading4 md:heading3">Send To:</p>
             <p className="flex-center text-white-400 md:heading4 body-text">You are sending USDC worth {value} {baseCurrency}</p>
-            <div className="flex-center gap-x-3 gap-y-3">
-                <p className=" text-gradient_blue-purple md:text-2xl heading4 font-bold">Send to:</p>
-                <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 md:text-2xl body-text shadow-md shadow-white max-w-full" placeholder="Enter the receiver's address" />
+            <div className="flex-center gap-x-1 md:gap-x-3  gap-y-3">
+                {/* <p className="text-gradient_blue-purple md:text-2xl heading4 font-bold">Send to:</p> */}
+                <input onChange={handleReceiverAdress} type="text" value={receiverAddress} className="outline-none flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 md:text-2xl body-text shadow-md shadow-white" placeholder="Enter the receiver's address" />
             </div>
-            <div className="flex-center gap-x-3 gap-y-3">
-                <p className=" text-gradient_blue-purple md:text-2xl heading4 font-bold">Add Note:</p>
-                <input onChange={(e) => setNoteAdded(e.target.value)} type="text" value={noteAdded} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 md:text-2xl body-text shadow-md shadow-white max-w-full" placeholder="Add a note" />
+            <div className="flex-center gap-x-1 md:gap-x-3 gap-y-3">
+                {/* <p className=" text-gradient_blue-purple md:text-2xl heading4 font-bold">Add Note:</p> */}
+                <input onChange={(e) => setNoteAdded(e.target.value)} type="text" value={noteAdded} className="outline-none flex flex-1 items-center text-gray-500 bg-white-800 rounded-md p-4 md:text-2xl body-text shadow-md shadow-white" placeholder="Add a note" />
             </div>
 
             <div className="flex items-center justify-around">
             {(receiverAddress!=="" && !ValidChecker.isValidAddress(receiverAddress)) ? (<div className="flex-center p-4 gap-x-3 gap-y-3 flex-col md:flex-row">
-                <p className="text-gradient_pink-orange text-3xl font-bold">Please Enter Valid Address</p>
+                <p className="text-gradient_pink-orange body-text md:heading4 font-bold">Please Enter Valid Address</p>
             </div>):
             (
                 <div className={`${receiverAddress==""?'hidden':''} md:text-2xl heading4 flex-center flex-col md:flex-row hover:cursor-pointer my-5`}>
-                    <button className='gradient_purple-blue text-white rounded-2xl p-4 px-6 hover:cursor-pointer' disabled={loading} onClick={handleSubmit}>Send to User</button>
+                    <button className='gradient_purple-blue text-white rounded-2xl p-4 hover:cursor-pointer' disabled={loading} onClick={handleSubmit}>Send to User</button>
                 </div>
             )
             }
             
-            <div className="md:text-2xl heading4 flex-center flex-col md:flex-row hover:cursor-pointer">
+            <div className="md:text-2xl heading4 flex-center hover:cursor-pointer">
                 <button className='gradient_pink-orange text-white rounded-2xl p-4 hover:cursor-pointer' disabled={loading} onClick={handleLinkTransfer}>Send via Link</button>
             </div>
 
+            </div>
+            <div className="body-text md:heading4 flex-center text-gradient_pink-orange">
+                Available balance:
+                <Image height={16} width={16} src={"/icon-192x192.png"} alt="usdc logo" className="m-2 bg-black-400 md:h-[20px] md:w-[20px]" />
+                {walletBalance}
             </div>
 
             {(link!=="" && !loading) && (
