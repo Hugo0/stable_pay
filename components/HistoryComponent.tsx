@@ -72,8 +72,8 @@ const HistoryComponent = () => {
     }
     
   return (
-    <div className="h-screen w-screen flex-center">
-        <div className="h-5/6 w-full md:w-3/4 bg-black-400 py-3 flex flex-col overflow-auto shadow shadow-white-400 rounded no-scrollbar">
+    <div className="w-screen flex-center">
+        <div className="md:max-h-[65vh] max-h-[80vh] w-full md:w-3/4 self-center bg-black-400 py-3 flex flex-col overflow-auto shadow shadow-white-400 rounded no-scrollbar">
             {/* {transactions.map((transaction:TransactionProps) => {
                 const amount=Number(transaction.sentAmount);
                 const showAmount=Number(amount.toFixed(3));
@@ -102,7 +102,7 @@ const HistoryComponent = () => {
             {Object.entries(groupTransactionsByMonth(transactions)).map(([month,transactions]:Props) => {
                 return (
                     <div className="bg-black-300" key={month}>
-                        <p className="heading1 text-white-800 flex-center w-full py-6 text-center">{month}</p>
+                        <p className="md:heading1 heading2 text-white-800 flex-center w-full py-6 text-center">{month}</p>
                         {transactions.map((transaction:TransactionProps) => {
                             const amount=Number(transaction.sentAmount);
                             const showAmount=Number(amount.toFixed(3));
@@ -117,8 +117,9 @@ const HistoryComponent = () => {
                             return (
                                 <div key={transaction.hashId} className=" py-7 w-full bg-black-400 gap-y-4 text-white-400 mt-2 flex items-center justify-around rounded">
                                     <Link href={`/payments/${transaction.hashId}`} className="hover:cursor-pointer flex-center w-full">
-                                        <p className={`heading4 w-3/4 text-center flex-center ${transaction.senderAddress==smartContractAddress?'text-gradient_pink-orange':'text-gradient_blue-purple'}`}>{transaction.senderAddress==smartContractAddress?'Sent on':'Received on'} {localDateString}</p>
-                                        <p className="text-center w-1/4 heading4">{showAmount} {transaction.sender_currency}</p>
+                                        <p className={`heading4 w-3/4 text-center flex-center`}>{transaction.senderAddress==smartContractAddress?'Sent on':'Received on'} {localDateString}</p>
+                                        <div></div>
+                                        <p className={`text-center w-1/4 heading4 ${transaction.senderAddress==smartContractAddress?'text-[#DC143C]':'text-[#2ecc71]'}`}>{transaction.senderAddress==smartContractAddress?'-':'+'}{showAmount} {transaction.sender_currency}</p>
                                     </Link>
                                     {/* <div className="flex-center flex-col"> */}
                                         {/* <Link href={`https://mumbai.polygonscan.com/tx/${transaction.hashId}`} target="_blank" className="text-gradient_purple-blue text-xl">View on Chain</Link> */}

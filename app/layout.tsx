@@ -48,7 +48,7 @@ export default function RootLayout({
       <ZeroDevProviderComponent>
         <PrivyProviderB>
           <Toaster />
-          <NavBar />
+          {/* <NavBar /> */}
           <SideBar />
           <body className='min-h-screen bg-black-100'>
             {children}
